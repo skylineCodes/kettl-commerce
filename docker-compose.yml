@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  product-service:
+    build:
+      context: .
+      dockerfile: ./apps/product-service/Dockerfile
+      target: development
+    command: npm run start:dev product-service
+    env_file:
+      - ./apps/product-service/.env
+    ports:
+      - '3001:3001'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - mongo
+  
+  auth:
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+      target: development
+    command: npm run start:dev auth
+    env_file:
+      - ./apps/auth/.env
+    ports:
+      - '3002:3002'
+    volumes:
+      - .:/usr/src/app/auth
+      - node_modules:/usr/src/app/auth/node_modules
+  
+  notifications:
+    build:
+      context: .
+      dockerfile: ./apps/notifications/Dockerfile
+      target: development
+    command: npm run start:dev notifications
+    env_file:
+      - ./apps/notifications/.env
+    volumes:
+      - .:/usr/src/app/notifications
+      - node_modules:/usr/src/app/notifications/node_modules
+  
+  order-service:
+    build:
+      context: .
+      dockerfile: ./apps/order-service/Dockerfile
+      target: development
+    command: npm run start:dev order-service
+    env_file:
+      - ./apps/order-service/.env
+    ports:
+      - '3005:3005'
+    volumes:
+      - .:/usr/src/app/order-service
+      - node_modules:/usr/src/app/order-service/node_modules
+    
+  mongo:
+    image: mongo:5
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+  
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: kettl-commerce-2201  # Root user password
+      MYSQL_DATABASE: order-service      # Database name
+      MYSQL_USER: admin                  # User name
+      MYSQL_PASSWORD: kettl-commerce-2202   # User password
+    ports:
+      - "3306:3306"  # Expose the MariaDB port
+    volumes:
+      - mariadb_data:/var/lib/mysql  # Persist data
+  
+volumes:
+  mongo-data:
+  node_modules:
+  mariadb_data:
+    driver: local
