@@ -39,7 +39,6 @@ export class CartProduct {
   @ManyToOne(() => Cart, (cart) => cart.products)
   cart: Cart;
 }
-
 export interface CartR {
   status: number;
   message?: string;

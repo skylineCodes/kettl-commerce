@@ -53,7 +53,7 @@ export class CartService {
       this.cartRepository.save(cart);
 
       return {
-        status: 200,
+        status: 201,
         message: 'Cart added successfully!',
       };
     } catch (error) {
