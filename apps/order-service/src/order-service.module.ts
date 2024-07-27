@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { OrderServiceController } from './order-service.controller';
 import { OrderServiceService } from './order-service.service';
-import { AUTH_SERVICE, DatabaseModule } from '@app/common';
+import { AUTH_SERVICE, DatabaseModule, JwtAuthGuard } from '@app/common';
 import { Order } from './models/order-service.schema';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
@@ -11,9 +11,15 @@ import { OrderItem } from './models/order-item.schema';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 // import { AuthModule } from 'apps/auth/src/auth.module';
 import { OrderRepository } from './order-service.repository';
+import { CartModule } from './cart/cart.module';
+import { Cart, CartProduct } from './cart/models/cart.schema';
+import { CartService } from './cart/cart.service';
+import { CartController } from './cart/cart.controller';
+import { CartRepository } from './cart/cart.repository';
 
 @Module({
   imports: [
+    CartModule,
     DatabaseModule,
     DatabaseModule.forTypeOrmRoot({
       entities: [Order, OrderItem],
@@ -43,7 +49,7 @@ import { OrderRepository } from './order-service.repository';
       },
     ]),
   ],
-  providers: [OrderServiceService, OrderRepository],
-  controllers: [OrderServiceController],
+  providers: [OrderServiceService, OrderRepository, JwtAuthGuard],
+  controllers: [OrderServiceController, CartController],
 })
 export class OrderServiceModule {}
