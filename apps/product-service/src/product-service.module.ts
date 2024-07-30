@@ -40,6 +40,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
   ],
   controllers: [ProductServiceController],
   providers: [ProductServiceService, ProductServiceRepository],
-  // exports: [ProductServiceService, ProductServiceRepository],
+  exports: [ProductServiceService, ProductServiceRepository],
 })
 export class ProductServiceModule {}

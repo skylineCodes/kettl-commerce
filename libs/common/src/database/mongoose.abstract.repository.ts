@@ -54,8 +54,7 @@ export abstract class MongooseAbstractRepository<TDocument extends AbstractDocum
     update: UpdateQuery<TDocument>,
   ): Promise<TDocument> {
     try {
-      const document = await this.model
-        .findOneAndUpdate(filterQuery, update, {
+      const document = await this.model.findOneAndUpdate(filterQuery, update, {
           new: true,
         })
         .lean<TDocument>(true);

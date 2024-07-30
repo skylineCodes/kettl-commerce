@@ -20,7 +20,7 @@ export class ProductServiceService {
       );
 
       return {
-        status: 200,
+        status: 201,
         message: 'Products created successfully!',
       };
     } catch (error) {
@@ -42,7 +42,7 @@ export class ProductServiceService {
     }
   }
 
-  async findOne(id: number): Promise<ProductR> {
+  async findOne(id: string): Promise<ProductR> {
     try {
       const product = await this.productServiceRepository.findOne({ _id: id });
 
@@ -56,7 +56,7 @@ export class ProductServiceService {
   }
 
   async update(
-    id: number,
+    id: string,
     updateProductServiceDto: UpdateProductServiceDto,
   ): Promise<ProductR> {
     try {
@@ -68,14 +68,14 @@ export class ProductServiceService {
 
       return {
         status: 200,
-        data: existingProduct,
+        message: 'Products updated successfully',
       };
     } catch (error) {
       throw error;
     }
   }
 
-  async remove(id: number): Promise<ProductR> {
+  async remove(id: string): Promise<ProductR> {
     try {
       const deletedProduct =
         await this.productServiceRepository.findOneAndDelete({ _id: id });
@@ -90,10 +90,7 @@ export class ProductServiceService {
   }
 
   // Check product stock count is available
-  async checkStockAvailability(
-    id: string,
-    quantity: number,
-  ): Promise<boolean> {
+  async checkStockAvailability(id: string, quantity: number): Promise<boolean> {
     try {
       const product: Product | any =
         await this.productServiceRepository.findOne({
@@ -107,19 +104,16 @@ export class ProductServiceService {
   }
 
   // Update product stock as reduced when order is made
-  async reduceStockQuantity(
-    id: string,
-    quantity: number,
-  ): Promise<ProductR> {
+  async reduceStockQuantity(id: string, quantity: number): Promise<ProductR> {
     try {
       const product: Product | any =
         await this.productServiceRepository.findOne({
           _id: id,
         });
-      
+
       product.stockQuantity -= quantity;
 
-      product.save()
+      await product.save();
 
       return {
         status: 200,
@@ -140,10 +134,10 @@ export class ProductServiceService {
         await this.productServiceRepository.findOne({
           _id: id,
         });
-      
+
       product.discountedPrice = product.price * (1 - discountPercentage / 100);
 
-      product.save();
+      await product.save();
 
       return {
         status: 200,
@@ -156,13 +150,14 @@ export class ProductServiceService {
 
   async removeDiscount(id: string): Promise<ProductR> {
     try {
-      const product: Product | any = await this.productServiceRepository.findOne({
-        _id: id,
-      });
+      const product: Product | any =
+        await this.productServiceRepository.findOne({
+          _id: id,
+        });
 
       product.discountedPrice = undefined;
 
-      product.save();
+      await product.save();
 
       return {
         status: 200,
@@ -191,10 +186,10 @@ export class ProductServiceService {
 
       if (pricingDto.timeOfDay) {
         // Apply a 10% discount during off-peak hours
-        // const offPeakHours = ['22:00', '06:00'];
-        // if (offPeakHours.includes(pricingDto.timeOfDay)) {
-        //   newPrice *= 0.9;
-        // }
+        const offPeakHours = ['22:00', '06:00'];
+        if (offPeakHours.includes(pricingDto.timeOfDay)) {
+          newPrice *= 0.9;
+        }
 
         const currentTime = new Date().getHours();
         const [startHour, endHour] = pricingDto.timeOfDay
