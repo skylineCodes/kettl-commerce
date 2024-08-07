@@ -61,6 +61,10 @@ export class UsersService {
           message: error.message,
         };
       }
+
+      if (error instanceof UnprocessableEntityException) {
+        throw error;
+      }
       
       return {
         status: 500,
@@ -100,9 +104,13 @@ export class UsersService {
         email: createUserDto.email,
       });
 
+      // console.log(res);
+
       if (res !== null) throw new UnprocessableEntityException('Email already exists.');
-    } catch (err) {
+
       return;
+    } catch (err) {
+      throw err;
     }
   }
 

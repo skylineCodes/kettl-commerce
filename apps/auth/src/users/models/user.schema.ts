@@ -3,9 +3,13 @@ import { AbstractDocument } from '@app/common';
 import { Document, Types } from 'mongoose';
 import { Address, AddressSchema } from './address.schema';
 import { Exclude } from 'class-transformer';
+import { IsOptional } from 'class-validator';
 
 @Schema({ versionKey: false, timestamps: true })
 export class UserDocument extends AbstractDocument {
+  @IsOptional()
+  _id: Types.ObjectId;
+
   @Prop({ required: true, unique: true })
   email: string;
 
