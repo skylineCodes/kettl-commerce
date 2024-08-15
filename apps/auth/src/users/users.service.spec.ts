@@ -485,4 +485,54 @@ describe('UsersService', () => {
       ).rejects.toThrow(new UnauthorizedException('Credentials not found!'));
     });
   });
+
+  describe('fetchAllUsers', () => {
+    it('should fetch all users', async () => {
+      const users: UserDocument[] = [
+        {
+          _id: new Types.ObjectId('668f6accc34945f741c2b1a0'),
+          email: 'onakoyak+001@gmail.com',
+        } as UserDocument,
+      ];
+
+      jest.spyOn(usersRepository, 'find').mockResolvedValue(users);
+
+      const result = await usersService.fetchAllUsers();
+
+      expect(usersRepository.find).toHaveBeenCalled();
+      expect(result).toEqual({ status: 200, data: users });
+    });
+  });
+
+  describe('deleteUsers', () => {
+    it('should delete a user', async () => {
+      const user: UserDocument = {
+        _id: new Types.ObjectId('668f6accc34945f741c2b1a0'),
+        email: 'onakoyak+001@gmail.com',
+      } as UserDocument;
+
+      jest.spyOn(usersRepository, 'findOneAndDelete').mockResolvedValue(user);
+
+      const result = await usersService.deleteUsers(user);
+
+      expect(usersRepository.findOneAndDelete).toHaveBeenCalledWith(user._id);
+      expect(result).toEqual({
+        status: 200,
+        message: 'User account deleted successfully!',
+      });
+    });
+
+    it('should throw UnauthorizedException for non-existent user', async () => {
+      const user: UserDocument = {
+        _id: new Types.ObjectId('668f6accc34945f741c2b1a0'),
+        email: 'onakoyak+001@gmail.com',
+      } as UserDocument;
+
+      jest.spyOn(usersRepository, 'findOneAndDelete').mockResolvedValue(null);
+
+      await expect(usersService.deleteUsers(user)).rejects.toThrow(
+        new UnauthorizedException('Credentials not found!'),
+      );
+    });
+  });
 });
