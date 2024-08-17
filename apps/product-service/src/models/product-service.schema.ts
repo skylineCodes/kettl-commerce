@@ -149,8 +149,21 @@ export interface Product {
   relatedProducts?: string[];
 }
 
+interface Links {
+  self: object;
+  next: object;
+  prev: object;
+  first: object;
+  last: object;
+}
+
 export interface ProductR {
   status: number;
   message?: string;
   data?: Product | Product[];
+  page?: number;
+  pageSize?: number;
+  totalPages?: number;
+  totalItems?: any;
+  _links?: Links;
 }

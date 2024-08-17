@@ -75,6 +75,24 @@ export abstract class MongooseAbstractRepository<TDocument extends AbstractDocum
     }
   }
 
+  async paginatedFind(filterQuery?: FilterQuery<TDocument>): Promise<TDocument[]> {
+    try {
+      const { page, pageSize } = filterQuery;
+
+      return this.model.find().skip((page - 1) * pageSize).limit(pageSize).exec();
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
+  }
+
+  async countDocuments(filterQuery?: FilterQuery<TDocument>): Promise<number> {
+    try {
+      return this.model.countDocuments().exec();
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
+  }
+
   async findOneAndDelete(
     filterQuery: FilterQuery<TDocument>,
   ): Promise<TDocument> {
