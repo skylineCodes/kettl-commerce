@@ -1,0 +1,7 @@
+# kibana.yml
+
+# Connect to the Elasticsearch instance
+elasticsearch.hosts: ["http://host.docker.internal:9200"]
+
+# Optional: Customize the Kibana server host and port
+server.host: "0.0.0.0"

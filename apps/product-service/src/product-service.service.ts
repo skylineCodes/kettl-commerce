@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { UpdateProductServiceDto } from './dto/update-product-service.dto';
 import { ProductServiceRepository } from './product-service.repository';
 import { Product, ProductR } from './models/product-service.schema';
@@ -6,12 +6,15 @@ import { CreateProductServiceDto } from './dto/create-product-service.dto';
 import { DynamicPricingDto } from './dto/discount-product-dto';
 import { PaginateDto } from './dto/paginate-product-service.dto';
 import { ConfigService } from '@nestjs/config';
+import { LoggerModule } from '@app/common';
 
 @Injectable()
 export class ProductServiceService {
+  private readonly logger = new Logger(ProductServiceService.name);
+
   constructor(
     private readonly productServiceRepository: ProductServiceRepository,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
   ) {}
 
   async create(
@@ -33,12 +36,16 @@ export class ProductServiceService {
 
   async findAll(paginateDto: PaginateDto): Promise<ProductR> {
     try {
+      this.logger.log('Fetching product by pages...');
       const { page, pageSize } = paginateDto;
 
       const totalItems = await this.productServiceRepository.countDocuments();
       const totalPages = Math.ceil(totalItems / pageSize);
 
-      const products = await this.productServiceRepository.paginatedFind({ page, pageSize });
+      const products = await this.productServiceRepository.paginatedFind({
+        page,
+        pageSize,
+      });
 
       return {
         status: 200,
@@ -49,14 +56,31 @@ export class ProductServiceService {
         totalPages,
         totalItems,
         _links: {
-          self: { href: `${this.configService.get<string>('PRODUCT_BASE_URL')}?page=${page}&pageSize=${pageSize}` },
-          next: page < totalPages ? { href: `${this.configService.get<string>('PRODUCT_BASE_URL')}?page=${page + 1}&pageSize=${pageSize}` } : null,
-          prev: page > 1 ? { href: `${this.configService.get<string>('PRODUCT_BASE_URL')}?page=${page - 1}&pageSize=${pageSize}` } : null,
-          first: { href: `${this.configService.get<string>('PRODUCT_BASE_URL')}?page=1&pageSize=${pageSize}` },
-          last: { href: `${this.configService.get<string>('PRODUCT_BASE_URL')}?page=${totalPages}&pageSize=${pageSize}` },
-        }
+          self: {
+            href: `${this.configService.get<string>('PRODUCT_BASE_URL')}?page=${page}&pageSize=${pageSize}`,
+          },
+          next:
+            page < totalPages
+              ? {
+                  href: `${this.configService.get<string>('PRODUCT_BASE_URL')}?page=${page + 1}&pageSize=${pageSize}`,
+                }
+              : null,
+          prev:
+            page > 1
+              ? {
+                  href: `${this.configService.get<string>('PRODUCT_BASE_URL')}?page=${page - 1}&pageSize=${pageSize}`,
+                }
+              : null,
+          first: {
+            href: `${this.configService.get<string>('PRODUCT_BASE_URL')}?page=1&pageSize=${pageSize}`,
+          },
+          last: {
+            href: `${this.configService.get<string>('PRODUCT_BASE_URL')}?page=${totalPages}&pageSize=${pageSize}`,
+          },
+        },
       };
     } catch (error) {
+      this.logger.log('Error fetching products', error);
       throw error;
     }
   }

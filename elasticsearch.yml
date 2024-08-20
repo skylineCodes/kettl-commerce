@@ -1,0 +1,17 @@
+# elasticsearch.yml
+
+# Disable security (Not recommended for production)
+xpack.security.enabled: false
+
+# Node settings
+network.host: "0.0.0.0"
+node.name: elasticsearch
+discovery.type: single-node
+cluster.name: docker-cluster
+
+# Memory settings
+bootstrap.memory_lock: true
+
+ent_search.external_url: http://host.docker.internal:3002
+elasticsearch.host: http://host.docker.internal:9200
+

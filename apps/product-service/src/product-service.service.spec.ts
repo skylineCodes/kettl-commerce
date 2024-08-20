@@ -599,15 +599,52 @@ describe('ProductServiceService', () => {
   
   describe('findAll', () => {
     it('should fetch an array of products', async () => {
+      const queryParams = {
+        page: 1,
+        pageSize: 5
+      }
+
+      const { page, pageSize } = queryParams;
+
+      const totalItems = 10;
+      const totalPages = Math.ceil(totalItems / pageSize);
+
       const result = {
         status: 200,
         message: 'Products retrieved successfully',
         data: allProducts,
+        page,
+        pageSize,
+        totalPages,
+        totalItems,
+        _links: {
+          self: {
+            href: `/product-service?page=${page}&pageSize=${pageSize}`,
+          },
+          next:
+            page < totalPages
+              ? {
+                  href: `/product-service?page=${page + 1}&pageSize=${pageSize}`,
+                }
+              : null,
+          prev:
+            page > 1
+              ? {
+                  href: `/product-service?page=${page - 1}&pageSize=${pageSize}`,
+                }
+              : null,
+          first: {
+            href: `/product-service?page=1&pageSize=${pageSize}`,
+          },
+          last: {
+            href: `/product-service?page=${totalPages}&pageSize=${pageSize}`,
+          },
+        },
       };
 
-      jest.spyOn(repository, 'find').mockResolvedValue(allProducts as any);
+      jest.spyOn(repository, 'paginatedFind').mockResolvedValue(allProducts as any);
 
-      expect(await service.findAll()).toEqual(result);
+      expect(await service.findAll(queryParams)).toEqual(result);
     });
   });
 

@@ -56,7 +56,55 @@ services:
     volumes:
       - .:/usr/src/app/order-service
       - node_modules:/usr/src/app/order-service/node_modules
-    
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.5.0
+    container_name: elasticsearch
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - elk
+
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:7.5.0
+    environment:
+      - ELASTICSEARCH_HOSTS=http://host.docker.internal:9200
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+    networks:
+      - elk
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.15.0
+    container_name: logstash
+    volumes:
+      - ./logstash/pipeline/logstash.conf:/usr/share/logstash/config/logstash.conf
+      - ./logstash/pipeline/logstash.yml:/usr/share/logstash/config/logstash.yml
+    ports:
+      - "5044:5044"
+    depends_on:
+      - elasticsearch
+    networks:
+      - elk
+
   mongo:
     image: mongo:5
     ports:
@@ -76,9 +124,36 @@ services:
       - "3306:3306"  # Expose the MariaDB port
     volumes:
       - mariadb_data:/var/lib/mysql  # Persist data
+
+  filebeat:
+    user: root
+    image: docker.elastic.co/beats/filebeat:8.15.0
+    container_name: filebeat
+    volumes:
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./logs:/var/log/kettl-commerce-logs
+    environment:
+      - setup.kibana.host=kibana:5601
+    depends_on:
+      - elasticsearch
+      - logstash
+      - kibana
+    command:
+      - "-e"
+      - "--strict.perms=false"
+    networks:
+      - elk
+
+networks:
+  elk:
+    driver: bridge
   
 volumes:
   mongo-data:
   node_modules:
   mariadb_data:
+    driver: local
+  esdata:
+    driver: local
+  elasticsearch-data:
     driver: local

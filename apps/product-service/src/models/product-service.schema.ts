@@ -149,7 +149,7 @@ export interface Product {
   relatedProducts?: string[];
 }
 
-interface Links {
+export interface HateoasLinks {
   self: object;
   next: object;
   prev: object;
@@ -165,5 +165,5 @@ export interface ProductR {
   pageSize?: number;
   totalPages?: number;
   totalItems?: any;
-  _links?: Links;
+  _links?: HateoasLinks;
 }
