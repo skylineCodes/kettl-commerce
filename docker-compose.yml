@@ -13,6 +13,7 @@ services:
       - '3001:3001'
     volumes:
       - .:/app
+      - ./libs/common/src/logger/logs:/usr/src/app/libs/common/src/logger/logs
       - /app/node_modules
     depends_on:
       - mongo
@@ -29,6 +30,7 @@ services:
       - '3002:3002'
     volumes:
       - .:/usr/src/app/auth
+      - ./libs/common/src/logger/logs:/usr/src/app/libs/common/src/logger/logs
       - node_modules:/usr/src/app/auth/node_modules
   
   notifications:
@@ -41,6 +43,7 @@ services:
       - ./apps/notifications/.env
     volumes:
       - .:/usr/src/app/notifications
+      - ./libs/common/src/logger/logs:/usr/src/app/libs/common/src/logger/logs
       - node_modules:/usr/src/app/notifications/node_modules
   
   order-service:
@@ -55,6 +58,7 @@ services:
       - '3005:3005'
     volumes:
       - .:/usr/src/app/order-service
+      - ./libs/common/src/logger/logs:/usr/src/app/libs/common/src/logger/logs
       - node_modules:/usr/src/app/order-service/node_modules
 
   elasticsearch:
@@ -73,6 +77,7 @@ services:
     cap_add:
       - IPC_LOCK
     volumes:
+      - ./elasticsearch.yml:/etc/elasticsearch/elasticsearch.yml:ro
       - elasticsearch-data:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
@@ -93,13 +98,13 @@ services:
       - elk
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:8.15.0
+    image: docker.elastic.co/logstash/logstash:7.5.0
     container_name: logstash
     volumes:
       - ./logstash/pipeline/logstash.conf:/usr/share/logstash/config/logstash.conf
       - ./logstash/pipeline/logstash.yml:/usr/share/logstash/config/logstash.yml
     ports:
-      - "5044:5044"
+      - 5044:5044
     depends_on:
       - elasticsearch
     networks:
@@ -127,20 +132,19 @@ services:
 
   filebeat:
     user: root
-    image: docker.elastic.co/beats/filebeat:8.15.0
+    image: docker.elastic.co/beats/filebeat:7.5.0
     container_name: filebeat
     volumes:
-      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - ./logs:/var/log/kettl-commerce-logs
+      - ./filebeat/filebeat.yml:/etc/filebeat/filebeat.yml:ro
+      # - ./logs:/var/log/kettl-commerce-logs
+      - ./libs/common/src/logger/logs:/usr/src/app/libs/common/src/logger/logs:ro
     environment:
       - setup.kibana.host=kibana:5601
+    command: ["filebeat", "-e", "--strict.perms=false", "-c", "/etc/filebeat/filebeat.yml"]
     depends_on:
       - elasticsearch
       - logstash
       - kibana
-    command:
-      - "-e"
-      - "--strict.perms=false"
     networks:
       - elk
 

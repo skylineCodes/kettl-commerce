@@ -1,10 +1,23 @@
 filebeat.inputs:
-  - type: log
-    paths:
-      - ../libs/common/src/logger/logs/*.log
+- type: log
+  enabled: true
+  paths:
+    - /usr/src/app/libs/common/src/logger/logs/*.log
 
-output.logstash:
-  hosts: ["logstash:5044"]
+# output.logstash:
+#   hosts: ["http://host.docker.internal:5044"]
+
+setup.template.name: "kettl-commerce-logs"
+setup.template.pattern: "kettl-commerce-logs-*"
+setup.template.settings:
+  index.number_of_shards: 1
+
+output.elasticsearch:
+ hosts: ["http://host.docker.internal:9200/"]
+ index: "kettl-commerce-logs-%{+yyyy.MM.dd}"
+
+#setup.kibana:
+ # host: "http://host.docker.internal:5601"
 
 # Disable ILM and Ingest Pipeline since Logstash is used
 setup.ilm.enabled: false

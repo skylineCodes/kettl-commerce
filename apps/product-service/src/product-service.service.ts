@@ -6,7 +6,7 @@ import { CreateProductServiceDto } from './dto/create-product-service.dto';
 import { DynamicPricingDto } from './dto/discount-product-dto';
 import { PaginateDto } from './dto/paginate-product-service.dto';
 import { ConfigService } from '@nestjs/config';
-import { LoggerModule } from '@app/common';
+import { LoggerModule, UserDto } from '@app/common';
 
 @Injectable()
 export class ProductServiceService {
@@ -17,26 +17,74 @@ export class ProductServiceService {
     private readonly configService: ConfigService,
   ) {}
 
+  generateRequestId(): string {
+    return Math.random().toString(36).substring(2, 9);
+  }
+
   async create(
     createProductServiceDto: CreateProductServiceDto,
+    user: UserDto
   ): Promise<ProductR> {
+    const requestId = this.generateRequestId();
+    
+    this.logger.log('Product Create', JSON.stringify({
+      timestamp: new Date().toISOString(),
+      operation: 'Create',
+      service_type: 'Product',
+      userId: user?._id,
+      productData: createProductServiceDto.products,
+      requestId: requestId,
+      status: 'processing',
+    }));
+
     try {
       const createdProduct = await this.productServiceRepository.insertMany(
         createProductServiceDto.products,
       );
+
+      this.logger.log('Product Create', JSON.stringify({
+        timestamp: new Date().toISOString(),
+        operation: 'Create',
+        service_type: 'Product',
+        userId: user?._id,
+        productData: createProductServiceDto.products,
+        requestId: requestId,
+        status: 'success',
+      }));
 
       return {
         status: 201,
         message: 'Products created successfully!',
       };
     } catch (error) {
+      this.logger.error('Product Create', JSON.stringify({
+        timestamp: new Date().toISOString(),
+        operation: 'Create',
+        service_type: 'Product',
+        userId: user?._id,
+        productData: createProductServiceDto.products,
+        requestId: requestId,
+        status: 'failed',
+        errors: error.message,
+      }));
+
       throw error;
     }
   }
 
-  async findAll(paginateDto: PaginateDto): Promise<ProductR> {
+  async findAll(paginateDto: PaginateDto, user: UserDto): Promise<ProductR> {
+    const requestId = this.generateRequestId();
+    
+    this.logger.log('Product Read', JSON.stringify({
+      timestamp: new Date().toISOString(),
+      operation: 'Read',
+      service_type: 'Product',
+      userId: user?._id,
+      requestId: requestId,
+      status: 'processing',
+    }));
+
     try {
-      this.logger.log('Fetching product by pages...');
       const { page, pageSize } = paginateDto;
 
       const totalItems = await this.productServiceRepository.countDocuments();
@@ -46,6 +94,17 @@ export class ProductServiceService {
         page,
         pageSize,
       });
+
+      this.logger.log('Product Read', JSON.stringify({
+        timestamp: new Date().toISOString(),
+        operation: 'Read',
+        service_type: 'Product',
+        userId: user?._id,
+        numberOfProductsFetched: products.length,
+        filtersApplied: paginateDto,
+        requestId: requestId,
+        status: 'success',
+      }));
 
       return {
         status: 200,
@@ -80,20 +139,62 @@ export class ProductServiceService {
         },
       };
     } catch (error) {
-      this.logger.log('Error fetching products', error);
+      this.logger.error('Product Read', JSON.stringify({
+        timestamp: new Date().toISOString(),
+        operation: 'Read',
+        service_type: 'Product',
+        userId: user?._id,
+        requestId: requestId,
+        status: 'failed',
+        errors: error.message,
+      }));
+
       throw error;
     }
   }
 
-  async findOne(id: string): Promise<ProductR> {
+  async findOne(id: string,  user: UserDto): Promise<ProductR> {
+    const requestId = this.generateRequestId();
+
+    this.logger.log('Product Single Read', JSON.stringify({
+      timestamp: new Date().toISOString(),
+      operation: 'Single Read',
+      service_type: 'Product',
+      userId: user?._id,
+      productId: id,
+      requestId: requestId,
+      status: 'processing',
+    }));
+
     try {
       const product = await this.productServiceRepository.findOne({ _id: id });
+
+      this.logger.log('Product Single Read', JSON.stringify({
+        timestamp: new Date().toISOString(),
+        operation: 'Single Read',
+        service_type: 'Product',
+        userId: user?._id,
+        productId: id,
+        requestId: requestId,
+        status: 'success',
+      }));
 
       return {
         status: 200,
         data: product,
       };
     } catch (error) {
+      this.logger.error('Product Single Read', JSON.stringify({
+        timestamp: new Date().toISOString(),
+        operation: 'Single Read',
+        service_type: 'Product',
+        userId: user?._id,
+        productId: id,
+        requestId: requestId,
+        status: 'failed',
+        errors: error.message,
+      }));
+
       throw error;
     }
   }
@@ -101,39 +202,109 @@ export class ProductServiceService {
   async update(
     id: string,
     updateProductServiceDto: UpdateProductServiceDto,
+    user: UserDto
   ): Promise<ProductR> {
+    const requestId = this.generateRequestId();
+
+    this.logger.log('Product Update', JSON.stringify({
+      timestamp: new Date().toISOString(),
+      operation: 'Update',
+      service_type: 'Product',
+      userId: user?._id,
+      productId: id,
+      fieldsUpdated: updateProductServiceDto,
+      requestId: requestId,
+      status: 'processing',
+    }));
+
     try {
-      const existingProduct =
-        await this.productServiceRepository.findOneAndUpdate(
+      const existingProduct = await this.productServiceRepository.findOneAndUpdate(
           { _id: id },
           updateProductServiceDto,
         );
+
+      this.logger.log('Product Update', JSON.stringify({
+        timestamp: new Date().toISOString(),
+        operation: 'Update',
+        service_type: 'Product',
+        userId: user?._id,
+        productId: id,
+        fieldsUpdated: updateProductServiceDto,
+        requestId: requestId,
+        status: 'success',
+      }));
 
       return {
         status: 200,
         message: 'Products updated successfully',
       };
     } catch (error) {
+      this.logger.error('Product Update', JSON.stringify({
+        timestamp: new Date().toISOString(),
+        operation: 'Update',
+        service_type: 'Product',
+        userId: user?._id,
+        productId: id,
+        requestId: requestId,
+        status: 'failed',
+        errors: error.message,
+      }));
+
       throw error;
     }
   }
 
-  async remove(id: string): Promise<ProductR> {
+  async remove(id: string, user: UserDto): Promise<ProductR> {
+    const requestId = this.generateRequestId();
+    this.logger.log('Product Delete', JSON.stringify({
+      timestamp: new Date().toISOString(),
+      operation: 'Delete',
+      service_type: 'Product',
+      userId: user?._id,
+      productId: id,
+      reasonForDeletion: 'No reason provided',
+      requestId: requestId,
+      status: 'processing',
+    }));
+
     try {
       const deletedProduct =
         await this.productServiceRepository.findOneAndDelete({ _id: id });
+
+      this.logger.log('Product Delete', JSON.stringify({
+        timestamp: new Date().toISOString(),
+        operation: 'Delete',
+        service_type: 'Product',
+        userId: user?._id,
+        productId: id,
+        reasonForDeletion: 'No reason provided',
+        requestId: requestId,
+        status: 'success',
+      }));
 
       return {
         status: 200,
         message: 'Product deleted successfully!',
       };
     } catch (error) {
+      this.logger.log('Product Delete', JSON.stringify({
+        timestamp: new Date().toISOString(),
+        operation: 'Delete',
+        service_type: 'Product',
+        userId: user?._id,
+        productId: id,
+        reasonForDeletion: 'No reason provided',
+        requestId: requestId,
+        status: 'failed',
+        errors: error.message,
+      }));
+
       throw error;
     }
   }
 
   // Check product stock count is available
-  async checkStockAvailability(id: string, quantity: number): Promise<boolean> {
+  async checkStockAvailability(id: string, quantity: number, user: UserDto): Promise<boolean> {
     try {
       const product: Product | any =
         await this.productServiceRepository.findOne({
@@ -147,7 +318,7 @@ export class ProductServiceService {
   }
 
   // Update product stock as reduced when order is made
-  async reduceStockQuantity(id: string, quantity: number): Promise<ProductR> {
+  async reduceStockQuantity(id: string, quantity: number, user: UserDto): Promise<ProductR> {
     try {
       const product: Product | any =
         await this.productServiceRepository.findOne({
@@ -171,6 +342,7 @@ export class ProductServiceService {
   async applyDiscount(
     id: string,
     discountPercentage: number,
+    user: UserDto
   ): Promise<ProductR> {
     try {
       const product: Product | any =
@@ -191,7 +363,7 @@ export class ProductServiceService {
     }
   }
 
-  async removeDiscount(id: string): Promise<ProductR> {
+  async removeDiscount(id: string, user: UserDto): Promise<ProductR> {
     try {
       const product: Product | any =
         await this.productServiceRepository.findOne({
@@ -214,6 +386,7 @@ export class ProductServiceService {
   async applyDynamicPricing(
     id: string,
     pricingDto: DynamicPricingDto,
+    user: UserDto
   ): Promise<ProductR> {
     try {
       const product: Product | any =

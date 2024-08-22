@@ -1,37 +1,44 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { ProductServiceService } from './product-service.service';
 import { CreateProductServiceDto } from './dto/create-product-service.dto';
 import { UpdateProductServiceDto } from './dto/update-product-service.dto';
 import { PaginateDto } from './dto/paginate-product-service.dto';
+import { CurrentUser, JwtAuthGuard, UserDto } from '@app/common';
 
 @Controller('product-service')
 export class ProductServiceController {
   constructor(private readonly productServiceService: ProductServiceService) {}
 
   @Post()
-  create(@Body() createProductServiceDto: CreateProductServiceDto) {
-    return this.productServiceService.create(createProductServiceDto);
+  @UseGuards(JwtAuthGuard)
+  create(@CurrentUser() user: UserDto, @Body() createProductServiceDto: CreateProductServiceDto) {
+    return this.productServiceService.create(createProductServiceDto, user);
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   findAll(
+    @CurrentUser() user: UserDto,
     @Query() paginateDto: PaginateDto
   ) {
-    return this.productServiceService.findAll(paginateDto);
+    return this.productServiceService.findAll(paginateDto, user);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productServiceService.findOne(id);
+  @UseGuards(JwtAuthGuard)
+  findOne(@CurrentUser() user: UserDto, @Param('id') id: string) {
+    return this.productServiceService.findOne(id, user);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductServiceDto: UpdateProductServiceDto) {
-    return this.productServiceService.update(id, updateProductServiceDto);
+  @UseGuards(JwtAuthGuard)
+  update(@CurrentUser() user: UserDto, @Param('id') id: string, @Body() updateProductServiceDto: UpdateProductServiceDto) {
+    return this.productServiceService.update(id, updateProductServiceDto, user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productServiceService.remove(id);
+  @UseGuards(JwtAuthGuard)
+  remove(@CurrentUser() user: UserDto, @Param('id') id: string) {
+    return this.productServiceService.remove(id, user);
   }
 }
