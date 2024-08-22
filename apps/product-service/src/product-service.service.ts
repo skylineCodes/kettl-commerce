@@ -27,7 +27,8 @@ export class ProductServiceService {
   ): Promise<ProductR> {
     const requestId = this.generateRequestId();
     
-    this.logger.log('Product Create', JSON.stringify({
+    this.logger.log(JSON.stringify({
+      message: 'Product Create',
       timestamp: new Date().toISOString(),
       operation: 'Create',
       service_type: 'Product',
@@ -42,7 +43,8 @@ export class ProductServiceService {
         createProductServiceDto.products,
       );
 
-      this.logger.log('Product Create', JSON.stringify({
+      this.logger.log(JSON.stringify({
+        message: 'Product Create',
         timestamp: new Date().toISOString(),
         operation: 'Create',
         service_type: 'Product',
@@ -57,7 +59,8 @@ export class ProductServiceService {
         message: 'Products created successfully!',
       };
     } catch (error) {
-      this.logger.error('Product Create', JSON.stringify({
+      this.logger.error(JSON.stringify({
+        message: 'Product Create',
         timestamp: new Date().toISOString(),
         operation: 'Create',
         service_type: 'Product',
@@ -75,7 +78,8 @@ export class ProductServiceService {
   async findAll(paginateDto: PaginateDto, user: UserDto): Promise<ProductR> {
     const requestId = this.generateRequestId();
     
-    this.logger.log('Product Read', JSON.stringify({
+    this.logger.log(JSON.stringify({
+      message: 'Product Read',
       timestamp: new Date().toISOString(),
       operation: 'Read',
       service_type: 'Product',
@@ -95,7 +99,8 @@ export class ProductServiceService {
         pageSize,
       });
 
-      this.logger.log('Product Read', JSON.stringify({
+      this.logger.log(JSON.stringify({
+        message: 'Product Read',
         timestamp: new Date().toISOString(),
         operation: 'Read',
         service_type: 'Product',
@@ -139,7 +144,8 @@ export class ProductServiceService {
         },
       };
     } catch (error) {
-      this.logger.error('Product Read', JSON.stringify({
+      this.logger.error(JSON.stringify({
+        message: 'Product Read',
         timestamp: new Date().toISOString(),
         operation: 'Read',
         service_type: 'Product',
@@ -156,7 +162,8 @@ export class ProductServiceService {
   async findOne(id: string,  user: UserDto): Promise<ProductR> {
     const requestId = this.generateRequestId();
 
-    this.logger.log('Product Single Read', JSON.stringify({
+    this.logger.log(JSON.stringify({
+      message: 'Product Single Read',
       timestamp: new Date().toISOString(),
       operation: 'Single Read',
       service_type: 'Product',
@@ -169,7 +176,8 @@ export class ProductServiceService {
     try {
       const product = await this.productServiceRepository.findOne({ _id: id });
 
-      this.logger.log('Product Single Read', JSON.stringify({
+      this.logger.log(JSON.stringify({
+        message: 'Product Single Read',
         timestamp: new Date().toISOString(),
         operation: 'Single Read',
         service_type: 'Product',
@@ -184,7 +192,8 @@ export class ProductServiceService {
         data: product,
       };
     } catch (error) {
-      this.logger.error('Product Single Read', JSON.stringify({
+      this.logger.error(JSON.stringify({
+        message: 'Product Single Read',
         timestamp: new Date().toISOString(),
         operation: 'Single Read',
         service_type: 'Product',
@@ -206,7 +215,8 @@ export class ProductServiceService {
   ): Promise<ProductR> {
     const requestId = this.generateRequestId();
 
-    this.logger.log('Product Update', JSON.stringify({
+    this.logger.log(JSON.stringify({
+      message: 'Product Update',
       timestamp: new Date().toISOString(),
       operation: 'Update',
       service_type: 'Product',
@@ -223,7 +233,8 @@ export class ProductServiceService {
           updateProductServiceDto,
         );
 
-      this.logger.log('Product Update', JSON.stringify({
+      this.logger.log(JSON.stringify({
+        message: 'Product Update',
         timestamp: new Date().toISOString(),
         operation: 'Update',
         service_type: 'Product',
@@ -239,7 +250,8 @@ export class ProductServiceService {
         message: 'Products updated successfully',
       };
     } catch (error) {
-      this.logger.error('Product Update', JSON.stringify({
+      this.logger.error(JSON.stringify({
+        message: 'Product Update',
         timestamp: new Date().toISOString(),
         operation: 'Update',
         service_type: 'Product',
@@ -256,7 +268,8 @@ export class ProductServiceService {
 
   async remove(id: string, user: UserDto): Promise<ProductR> {
     const requestId = this.generateRequestId();
-    this.logger.log('Product Delete', JSON.stringify({
+    this.logger.log(JSON.stringify({
+      message: 'Product Delete',
       timestamp: new Date().toISOString(),
       operation: 'Delete',
       service_type: 'Product',
@@ -271,7 +284,8 @@ export class ProductServiceService {
       const deletedProduct =
         await this.productServiceRepository.findOneAndDelete({ _id: id });
 
-      this.logger.log('Product Delete', JSON.stringify({
+      this.logger.log(JSON.stringify({
+        message: 'Product Delete',
         timestamp: new Date().toISOString(),
         operation: 'Delete',
         service_type: 'Product',
@@ -287,7 +301,8 @@ export class ProductServiceService {
         message: 'Product deleted successfully!',
       };
     } catch (error) {
-      this.logger.log('Product Delete', JSON.stringify({
+      this.logger.log(JSON.stringify({
+        message: 'Product Delete',
         timestamp: new Date().toISOString(),
         operation: 'Delete',
         service_type: 'Product',
