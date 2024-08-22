@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import * as Joi from 'joi';
 import { ProductServiceService } from './product-service.service';
 import { ProductServiceController } from './product-service.controller';
-import { AUTH_SERVICE, DatabaseModule, LoggerModule } from '@app/common';
+import { AUTH_SERVICE, DatabaseModule, JwtAuthGuard, LoggerModule } from '@app/common';
 import { ProductSchema, ProductServiceDocument } from './models/product-service.schema';
 import { ProductServiceRepository } from './product-service.repository';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -39,7 +39,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ]),
   ],
   controllers: [ProductServiceController],
-  providers: [ProductServiceService, ProductServiceRepository],
+  providers: [ProductServiceService, ProductServiceRepository, JwtAuthGuard],
   exports: [ProductServiceService, ProductServiceRepository],
 })
 export class ProductServiceModule {}
