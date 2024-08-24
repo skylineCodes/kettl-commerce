@@ -78,7 +78,7 @@ export class ProductServiceService {
   async findAll(paginateDto: PaginateDto, user: UserDto): Promise<ProductR> {
     const requestId = this.generateRequestId();
     
-    this.logger.log(JSON.stringify({
+    this.logger.log({
       message: 'Product Read',
       timestamp: new Date().toISOString(),
       operation: 'Read',
@@ -86,7 +86,7 @@ export class ProductServiceService {
       userId: user?._id,
       requestId: requestId,
       status: 'processing',
-    }));
+    });
 
     try {
       const { page, pageSize } = paginateDto;
@@ -99,7 +99,7 @@ export class ProductServiceService {
         pageSize,
       });
 
-      this.logger.log(JSON.stringify({
+      this.logger.log({
         message: 'Product Read',
         timestamp: new Date().toISOString(),
         operation: 'Read',
@@ -109,7 +109,7 @@ export class ProductServiceService {
         filtersApplied: paginateDto,
         requestId: requestId,
         status: 'success',
-      }));
+      });
 
       return {
         status: 200,
@@ -144,7 +144,7 @@ export class ProductServiceService {
         },
       };
     } catch (error) {
-      this.logger.error(JSON.stringify({
+      this.logger.error({
         message: 'Product Read',
         timestamp: new Date().toISOString(),
         operation: 'Read',
@@ -153,7 +153,7 @@ export class ProductServiceService {
         requestId: requestId,
         status: 'failed',
         errors: error.message,
-      }));
+      });
 
       throw error;
     }

@@ -4,6 +4,17 @@ filebeat.inputs:
   paths:
     - /usr/src/app/libs/common/src/logger/logs/*.log
 
+  processors:
+    - drop_fields:
+        fields: ["agent", "log", "input", "host", "ecs" ]
+        #- add_host_metadata: ~
+        #- add_cloud_metadata: ~
+
+# Global processors, apply to all events later in the pipeline
+processors:
+  - drop_fields:
+      fields: ["agent", "log", "input", "host", "ecs" ]
+
 # output.logstash:
 #   hosts: ["http://host.docker.internal:5044"]
 

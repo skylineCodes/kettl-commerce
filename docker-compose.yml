@@ -17,6 +17,10 @@ services:
       - /app/node_modules
     depends_on:
       - mongo
+      - redis
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
   
   auth:
     build:
@@ -147,6 +151,14 @@ services:
       - kibana
     networks:
       - elk
+  
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
 
 networks:
   elk:
@@ -161,3 +173,4 @@ volumes:
     driver: local
   elasticsearch-data:
     driver: local
+  redis_data:

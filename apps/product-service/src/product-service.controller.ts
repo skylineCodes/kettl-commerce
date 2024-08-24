@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ProductServiceService } from './product-service.service';
 import { CreateProductServiceDto } from './dto/create-product-service.dto';
 import { UpdateProductServiceDto } from './dto/update-product-service.dto';
 import { PaginateDto } from './dto/paginate-product-service.dto';
 import { CurrentUser, JwtAuthGuard, UserDto } from '@app/common';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('product-service')
 @Controller('product-service')
 export class ProductServiceController {
   constructor(private readonly productServiceService: ProductServiceService) {}

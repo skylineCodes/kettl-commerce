@@ -20,6 +20,7 @@ import { DataSourceOptions } from 'typeorm';
   ],
   providers: [ConfigService],
 })
+
 export class DatabaseModule {
   static forFeature(models: ModelDefinition[]): DynamicModule {
     return MongooseModule.forFeature(models);
