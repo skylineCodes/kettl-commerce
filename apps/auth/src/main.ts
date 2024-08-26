@@ -1,17 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { AuthModule } from './auth.module';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
-import { WinstonModule, WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
-import { Logger } from 'nestjs-pino';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { ConfigService } from '@nestjs/config';
 import { Transport } from '@nestjs/microservices';
-import { WinstonLogger } from '@app/common/logger/winston.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AuthModule, { bufferLogs: true, 
-    // logger: new WinstonLogger() 
-  });
+  const app = await NestFactory.create(AuthModule, { bufferLogs: true });
     
   const configService = app.get(ConfigService);
 

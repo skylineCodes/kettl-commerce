@@ -1,18 +1,18 @@
-import { IsString } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class AddressDto {
-  @IsString()
+  @ApiProperty({ example: 'Kolade estate, Gof area.' })
   street: string;
 
-  @IsString()
+  @ApiProperty({ example: 'Osogbo' })
   city: string;
 
-  @IsString()
+  @ApiProperty({ example: 'Osun' })
   state: string;
 
-  @IsString()
+  @ApiProperty({ example: '10011' })
   postalCode: string;
 
-  @IsString()
+  @ApiProperty({ example: 'Nigeria' })
   country: string;
 }

@@ -6,16 +6,17 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "ES2021",
+    "target": "es6",
     "sourceMap": true,
+    "esModuleInterop": true,
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@app/common": [
@@ -24,6 +25,7 @@
       "@app/common/*": [
         "libs/common/src/*"
       ]
-    }
+    },
+    "typeRoots": ["./node_modules/@types", "./types"]
   }
 }

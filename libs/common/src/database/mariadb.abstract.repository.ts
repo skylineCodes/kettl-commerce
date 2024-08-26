@@ -62,6 +62,60 @@ export abstract class MariadbAbstractRepository<TEntity> {
     }
   }
 
+  async save(
+    entity: DeepPartial<TEntity> | DeepPartial<TEntity[]>,
+    options?: SaveOptions,
+  ): Promise<TEntity | TEntity[]> {
+    try {
+      // Log the entity before saving
+      this.logger.log('Saving entity:', entity);
+
+      // Check if entity is an array or a single object
+      if (Array.isArray(entity)) {
+        // Handle array of entities
+        const savedEntities = await this.repository.save(entity as DeepPartial<TEntity>[], options);
+        this.logger.log('Saved entities:', savedEntities);
+        return savedEntities;
+      } else {
+        // Handle single entity
+        const savedEntity = await this.repository.save(entity as DeepPartial<TEntity>, options);
+        this.logger.log('Saved entity:', savedEntity);
+        return savedEntity;
+      }
+    } catch (error) {
+      // Log the error message
+      this.logger.error('Error saving entity:', error.message);
+      // Rethrow the error for higher-level handling
+      throw error;
+    }
+  }
+
+  async findAndUpdate(
+    conditions: FindOneOptions<TEntity>,
+    updateData: DeepPartial<TEntity>,
+    options?: SaveOptions,
+  ): Promise<TEntity> {
+    try {
+      // Find the entity based on the provided conditions
+      const entity = await this.findOne(conditions);
+  
+      if (!entity) {
+        this.logger.warn('Entity not found for update', conditions);
+        throw new NotFoundException('Entity not found for update');
+      }
+  
+      // Merge the existing entity with the update data
+      const updatedEntity = this.repository.merge(entity, updateData);
+  
+      // Save the updated entity
+      return await this.repository.save(updatedEntity, options);
+    } catch (error) {
+      this.logger.warn('Error updating entity', { conditions, updateData });
+      throw error;
+    }
+  }
+  
+
   async findOneAndDelete(
     conditions: FindOneOptions<TEntity>,
   ): Promise<DeleteResult> {

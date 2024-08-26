@@ -1,31 +1,49 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindOneOptions } from 'typeorm';
 import { Order, OrderR } from './models/order-service.schema';
 import { CreateOrderDto } from './dto/create-order-service.dto';
 import { UpdateOrderDto } from './dto/update-order-service.dto';
-import { UserDocument } from 'apps/auth/src/users/models/user.schema';
 import { UserDto } from '@app/common';
+import { OrderRepository } from './order-service.repository';
+import { UsersRepository } from 'apps/auth/src/users/users.repository';
+import { Types } from 'mongoose';
+import { ProductServiceRepository } from 'apps/product-service/src/product-service.repository';
+import { OrderItem } from './models/order-item.schema';
+import { Product } from 'apps/product-service/src/models/product-service.schema';
 
 @Injectable()
 export class OrderServiceService {
   private readonly logger = new Logger(OrderServiceService.name);
   constructor(
     @InjectRepository(Order)
-    private ordersRepository: Repository<Order>,
+    private ordersRepository: OrderRepository,
+    private usersRepository: UsersRepository,
+    private productServiceRepository: ProductServiceRepository,
   ) {}
 
-  async findAll(user: UserDto): Promise<OrderR> {
+  async findAll(user: UserDto): Promise<OrderR | any> {
     try {
-      const order = await this.ordersRepository.find({
+      const orders = await this.ordersRepository.find({
         where: {
           userId: String(user?._id),
         },
       });
 
+      const userRes = await this.fetchUser(user._id);
+
+      // If user not found, return the error message
+      if ('status' in userRes) {
+        return userRes;
+      }
+
+      // Map orders with user details and products
+      const mappedOrders = await Promise.all(
+        orders.map(order => this.mapOrderWithUserAndProducts(order, userRes))
+      );
+      
       return {
         status: 200,
-        data: order,
+        data: mappedOrders,
       };
     } catch (error) {
       if (error.code === '11000') {
@@ -42,7 +60,7 @@ export class OrderServiceService {
     }
   }
 
-  async findOne(id: number): Promise<OrderR> {
+  async findOne(user: UserDto, id: number): Promise<OrderR | any> {
     try {
       const order = await this.ordersRepository.findOne({ where: { id } });
 
@@ -51,9 +69,19 @@ export class OrderServiceService {
         throw new NotFoundException(`Order with ID ${id} not found`);
       }
 
+      const userRes = await this.fetchUser(user._id);
+
+      // If user not found, return the error message
+      if ('status' in userRes) {
+        return userRes;
+      }
+
+      // Map orders with user details and products
+      const mappedOrder = await this.mapOrderWithUserAndProducts(order, userRes);
+
       return {
         status: 200,
-        data: order,
+        data: mappedOrder,
       };
     } catch (error) {
       this.logger.warn('Error finding order', id);
@@ -69,7 +97,7 @@ export class OrderServiceService {
         ...createOrderDto,
       });
 
-      await this.ordersRepository.save(order);
+      await this.ordersRepository.save(await order);
 
       // await this.validateCreateUserDto(createUserDto);
 
@@ -102,7 +130,9 @@ export class OrderServiceService {
         throw new NotFoundException(`Order with ID ${id} not found`);
       }
 
-      await this.ordersRepository.update(id, updateOrderDto);
+      await this.ordersRepository.findAndUpdate({ where: {
+        id
+      }}, updateOrderDto);
 
       return {
         status: 200,
@@ -142,7 +172,9 @@ export class OrderServiceService {
 
   async remove(id: number, updateOrderDto: UpdateOrderDto): Promise<OrderR> {
     try {
-      await this.ordersRepository.update(id, updateOrderDto);
+      await this.ordersRepository.findAndUpdate({ where: {
+        id
+      }}, updateOrderDto);
 
       return {
         status: 200,
@@ -154,5 +186,55 @@ export class OrderServiceService {
         message: error.message,
       };
     }
+  }
+
+   // Helper function to fetch user details
+  private async fetchUser(userId: string) {
+    const user = await this.usersRepository.findOne(new Types.ObjectId(userId));
+    if (!user) {
+      return {
+        status: 404,
+        message: 'User not found',
+      };
+    }
+    return user;
+  }
+
+  // Helper function to fetch product details for an order item
+  private async fetchProductDetails(productItem: OrderItem) {
+    const product = await this.productServiceRepository.findOne({ _id: productItem.productId });
+    if (product) {
+      return {
+        quantity: productItem.quantity,
+        ...product,
+      };
+    }
+    return null;
+  }
+
+  // Helper function to map orders with user details and products
+  private async mapOrderWithUserAndProducts(order: Order, user: any) {
+    const orderProducts = await Promise.all(
+      order?.products?.map(productItem => this.fetchProductDetails(productItem))
+    );
+
+    return {
+      user: {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phoneNumber: user.phoneNumber,
+        email: user.email,
+      },
+      orderItems: orderProducts,
+      shippingAddress: user.address,
+      billingAddress: user.address,
+      totalAmount: order.totalAmount,
+      status: order.status,
+      paymentMethod: order.paymentMethod,
+      completedAt: order.completedAt,
+      shippingMethod: order.shippingMethod,
+      createdAt: order.createdAt,
+      updatedAt: order.updatedAt,
+    };
   }
 }

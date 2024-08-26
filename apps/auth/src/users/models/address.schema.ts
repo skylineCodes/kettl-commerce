@@ -1,20 +1,21 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Schema({ _id: false })
 export class Address {
-  @Prop({ required: true })
+  @ApiProperty({ example: 'Kolade estate, Gof area.' })
   street: string;
 
-  @Prop({ required: true })
+  @ApiProperty({ example: 'Osogbo' })
   city: string;
 
-  @Prop({ required: true })
+  @ApiProperty({ example: 'Osun' })
   state: string;
 
-  @Prop({ required: true })
+  @ApiProperty({ example: '10011' })
   postalCode: string;
 
-  @Prop({ required: true })
+  @ApiProperty({ example: 'Nigeria' })
   country: string;
 }
 

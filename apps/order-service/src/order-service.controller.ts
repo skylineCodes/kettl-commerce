@@ -15,14 +15,25 @@ import { CreateOrderDto } from './dto/create-order-service.dto';
 import { UpdateOrderDto } from './dto/update-order-service.dto';
 import { OrderR } from './models/order-service.schema';
 import { CurrentUser, JwtAuthGuard, UserDto } from '@app/common';
-import { UserDocument } from 'apps/auth/src/users/models/user.schema';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { OrderResponseDtoR, SingleOrderResponseDtoR } from './dto/order-response-array.dto';
 
-@Controller('orders')
+@ApiTags('Orders')
+@Controller('order-service')
 export class OrderServiceController {
   constructor(private readonly orderService: OrderServiceService) {}
 
   @Get()
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Fetch Orders' })
+  @ApiResponse({
+    status: 200,
+    type: OrderResponseDtoR
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden resource',
+  })
   async findAll(@CurrentUser() user: UserDto, @Res() response: Response) {
     const orderResponse: OrderR = await this.orderService.findAll(user);
 
@@ -30,14 +41,33 @@ export class OrderServiceController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number, @Res() response: Response) {
-    const orderResponse: OrderR = await this.orderService.findOne(id);
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Fetch Single Orders' })
+  @ApiResponse({
+    status: 200,
+    type: SingleOrderResponseDtoR
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden resource',
+  })
+  async findOne(@CurrentUser() user: UserDto, @Param('id') id: number, @Res() response: Response) {
+    const orderResponse: OrderR = await this.orderService.findOne(user, id);
 
     return response.status(orderResponse.status).json(orderResponse);
   }
 
   @Post('create')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Create Orders' })
+  @ApiResponse({
+    status: 201,
+    description: 'Order created successfully!',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden resource',
+  })
   async create(
     @CurrentUser() user: UserDto,
     @Body() createOrderDto: CreateOrderDto,

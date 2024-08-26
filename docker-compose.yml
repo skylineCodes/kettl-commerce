@@ -1,6 +1,30 @@
 version: '3.8'
 
 services:
+  mariadb:
+    image: mariadb:10.5
+    container_name: mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: kettl-commerce-2201  # Root user password
+      MYSQL_DATABASE: order-service      # Database name
+      MYSQL_USER: admin                  # User name
+      MYSQL_PASSWORD: kettl-commerce-2202   # User password
+      MYSQL_INITDB_SKIP_TZINFO: 1
+      MYSQL_TCP_KEEPALIVE: 60
+      MYSQL_CONNECT_TIMEOUT: 60
+      MYSQL_NET_READ_TIMEOUT: 60
+      MYSQL_NET_WRITE_TIMEOUT: 60
+    ports:
+      - "3306:3306"  # Expose the MariaDB port
+    volumes:
+      - mariadb_data:/var/lib/mysql  # Persist data
+    healthcheck:
+      # test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p", "kettl-commerce-2201"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
   product-service:
     build:
       context: .
@@ -36,6 +60,11 @@ services:
       - .:/usr/src/app/auth
       - ./libs/common/src/logger/logs:/usr/src/app/libs/common/src/logger/logs
       - node_modules:/usr/src/app/auth/node_modules
+    depends_on:
+      - redis
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
   
   notifications:
     build:
@@ -49,6 +78,11 @@ services:
       - .:/usr/src/app/notifications
       - ./libs/common/src/logger/logs:/usr/src/app/libs/common/src/logger/logs
       - node_modules:/usr/src/app/notifications/node_modules
+    depends_on:
+      - redis
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
   
   order-service:
     build:
@@ -64,6 +98,20 @@ services:
       - .:/usr/src/app/order-service
       - ./libs/common/src/logger/logs:/usr/src/app/libs/common/src/logger/logs
       - node_modules:/usr/src/app/order-service/node_modules
+    depends_on:
+      - redis
+      - mariadb
+      - mongo
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      MARIADB_HOST: mariadb
+      MARIADB_PORT: 3306
+      MARIADB_USER: admin
+      MARIADB_PASSWORD: kettl-commerce-2202
+      MARIADB_DB: order-service
+    # networks:
+    #   - elk
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.5.0
@@ -120,19 +168,6 @@ services:
       - '27017:27017'
     volumes:
       - mongo-data:/data/db
-  
-  mariadb:
-    image: mariadb:latest
-    container_name: mariadb
-    environment:
-      MYSQL_ROOT_PASSWORD: kettl-commerce-2201  # Root user password
-      MYSQL_DATABASE: order-service      # Database name
-      MYSQL_USER: admin                  # User name
-      MYSQL_PASSWORD: kettl-commerce-2202   # User password
-    ports:
-      - "3306:3306"  # Expose the MariaDB port
-    volumes:
-      - mariadb_data:/var/lib/mysql  # Persist data
 
   filebeat:
     user: root
@@ -159,6 +194,8 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    # networks:
+    #   - elk
 
 networks:
   elk:

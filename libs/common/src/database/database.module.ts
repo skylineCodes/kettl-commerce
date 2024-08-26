@@ -27,7 +27,7 @@ export class DatabaseModule {
   }
 
   static forTypeOrmFeature(
-    entities: Function[],
+    entities: any[],
     connectionName?: string,
   ): DynamicModule {
     return TypeOrmModule.forFeature(entities, connectionName);
@@ -38,6 +38,7 @@ export class DatabaseModule {
     connectionName?: string,
   ): DynamicModule {
     return TypeOrmModule.forRootAsync({
+      name: connectionName,
       useFactory: (configService: ConfigService) => ({
         type: 'mariadb',
         host: configService.get('MARIADB_HOST'),
@@ -45,11 +46,10 @@ export class DatabaseModule {
         username: configService.get('MARIADB_USER'),
         password: configService.get('MARIADB_PASSWORD'),
         database: configService.get('MARIADB_DB'),
-        entities: options?.entities,
+        entities: options?.entities || [],
         synchronize: true,
       }),
       inject: [ConfigService],
-      name: connectionName,
     });
   }
 }

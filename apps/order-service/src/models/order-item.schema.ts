@@ -2,11 +2,8 @@
 import {
   Entity,
   Column,
-  OneToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { Order } from './order-service.schema';
 

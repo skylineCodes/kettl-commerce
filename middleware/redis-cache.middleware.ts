@@ -28,7 +28,7 @@ export class RedisCacheMiddleware implements NestMiddleware {
                 res.send = oldSend;
 
                 if (res.statusCode.toString().startsWith('2')) {
-                    await this.cacheManager.set(key, data, 30);
+                    await this.cacheManager.set(key, data, 30000);
                 }
 
                 return res.send(data);
