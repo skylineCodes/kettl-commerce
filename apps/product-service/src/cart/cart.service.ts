@@ -1,8 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Cart, CartR } from './models/cart.schema';
-import { CartProductDto, CreateCartDto } from './dto/create-cart.dto';
-import { CartRepository } from './cart.repository';
+import { CartDocument, CartR } from './models/cart.schema';
+import { CartProductDocumentDto, CreateCartDto } from './dto/create-cart.dto';
+import { CartDocumentRepository } from './cart.repository';
 import { UsersRepository } from 'apps/auth/src/users/users.repository';
 import { Types } from 'mongoose';
 import { ProductServiceRepository } from 'apps/product-service/src/product-service.repository';
@@ -12,15 +11,14 @@ export class CartService {
   private readonly logger = new Logger(CartService.name);
 
   constructor(
-    @InjectRepository(Cart)
-    private readonly cartRepository: CartRepository,
-    private usersRepository: UsersRepository,
-    private productServiceRepository: ProductServiceRepository,
+    private readonly usersRepository: UsersRepository,
+    private readonly productServiceRepository: ProductServiceRepository,
+    private readonly cartRepository: CartDocumentRepository,
   ) {}
 
   async getCart(userId: string): Promise<CartR | any> {
     try {
-      const cart = await this.cartRepository.findOne({ where: { userId } });
+      const cart = await this.cartRepository.findOne({ userId });
 
       if (!cart) {
         this.logger.warn('Cart not found', userId);
@@ -35,7 +33,7 @@ export class CartService {
       }
 
       // Map orders with user details and products
-      const mappedCart = await this.mapCartWithUserAndProducts(cart, userRes)
+      const mappedCart = await this.mapCartWithUserAndProducts(cart, userRes);
 
       return {
         status: 200,
@@ -56,18 +54,24 @@ export class CartService {
       const { userId, products, total, tax } = createCartDto;
 
       let cart: CreateCartDto = await this.cartRepository.findOne({
-        where: { userId },
+        userId,
       });
 
+      
       if (cart) {
-        cart.products = products;
-        cart.total = total;
-        cart.tax = tax;
+        await this.cartRepository.findOneAndUpdate(
+          { userId },
+          {
+            products,
+            total,
+            tax
+          },
+        );
       } else {
         cart = await this.cartRepository.create({ userId, products, total, tax });
       }
-
-      await this.cartRepository.save(cart);
+      
+      // await this.cartRepository.save(cart);
 
       return {
         status: 201,
@@ -75,6 +79,7 @@ export class CartService {
       };
     } catch (error) {
       this.logger.warn('Error create or updating cart');
+      
       return {
         status: 500,
         message: error.message,
@@ -101,7 +106,7 @@ export class CartService {
       // Update the cart with the new products array
       cart.products = updatedProducts;
 
-      await this.cartRepository.update({
+      await this.cartRepository.findOneAndUpdate({
         userId
       }, cart);
 
@@ -121,10 +126,6 @@ export class CartService {
   async removeCart(userId: string): Promise<CartR> {
     try {
       const result = await this.cartRepository.findOneAndDelete({ where: { userId } });
-
-      if (result.affected === 0) {
-        throw new NotFoundException('Cart not found');
-      }
 
       return {
         status: 200,
@@ -152,7 +153,7 @@ export class CartService {
   }
 
   // Helper function to fetch product details for an order item
-  private async fetchProductDetails(productItem: CartProductDto) {
+  private async fetchProductDetails(productItem: CartProductDocumentDto) {
     const product = await this.productServiceRepository.findOne({ _id: productItem.productId });
     if (product) {
       return {
@@ -165,7 +166,7 @@ export class CartService {
   }
 
   // Helper function to map orders with user details and products
-  private async mapCartWithUserAndProducts(cart: Cart, user: any) {
+  private async mapCartWithUserAndProducts(cart: CartDocument, user: any) {
     const orderProducts = await Promise.all(
       cart?.products?.map(productItem => this.fetchProductDetails(productItem))
     );

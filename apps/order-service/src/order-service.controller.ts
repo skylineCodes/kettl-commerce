@@ -16,7 +16,8 @@ import { UpdateOrderDto } from './dto/update-order-service.dto';
 import { OrderR } from './models/order-service.schema';
 import { CurrentUser, JwtAuthGuard, UserDto } from '@app/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { OrderResponseDtoR, SingleOrderResponseDtoR } from './dto/order-response-array.dto';
+import { OrderResponseDtoR, SingleOrderResponseDtoR, TrackOrderResponseDtoR } from './dto/order-response-array.dto';
+import { CancelOrderDto } from './dto/cancel-order-service.dto';
 
 @ApiTags('Orders')
 @Controller('order-service')
@@ -61,7 +62,7 @@ export class OrderServiceController {
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Create Orders' })
   @ApiResponse({
-    status: 201,
+    status: 200,
     description: 'Order created successfully!',
   })
   @ApiResponse({
@@ -82,12 +83,24 @@ export class OrderServiceController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Update Order' })
+  @ApiResponse({
+    status: 201,
+    description: 'Order updated successfully!',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden resource',
+  })
   async update(
+    @CurrentUser() user: UserDto,
     @Param('id') id: number,
     @Body() updateOrderDto: UpdateOrderDto,
     @Res() response: Response,
   ) {
     const orderResponse: OrderR = await this.orderService.update(
+      user,
       id,
       updateOrderDto,
     );
@@ -97,6 +110,15 @@ export class OrderServiceController {
 
   @Get(':id/track')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Track Order' })
+  @ApiResponse({
+    status: 200,
+    type: TrackOrderResponseDtoR
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden resource',
+  })
   async trackOrderStatus(@Param('id') id: number, @Res() response: Response) {
     const orderResponse: OrderR = await this.orderService.trackOrderStatus(id);
 
@@ -104,14 +126,24 @@ export class OrderServiceController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Cancel Order' })
+  @ApiResponse({
+    status: 200,
+    description: 'Order cancelled successfully!',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden resource',
+  })
   async remove(
     @Param('id') id: number,
-    @Body() updateOrderDto: UpdateOrderDto,
+    @Body() cancelOrderDto: CancelOrderDto,
     @Res() response: Response,
   ) {
     const orderResponse: OrderR = await this.orderService.remove(
       id,
-      updateOrderDto,
+      cancelOrderDto,
     );
 
     return response.status(orderResponse.status).json(orderResponse);

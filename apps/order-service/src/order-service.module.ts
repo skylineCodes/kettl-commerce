@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
+import { forwardRef, MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { OrderServiceController } from './order-service.controller';
 import { OrderServiceService } from './order-service.service';
 import { AUTH_SERVICE, CacheModule, DatabaseModule, JwtAuthGuard } from '@app/common';
@@ -23,6 +23,9 @@ import { ProductServiceRepository } from 'apps/product-service/src/product-servi
 
 @Module({
   imports: [
+    // WishlistModule,
+    // CartModule,
+    forwardRef(() => WishlistModule),
     DatabaseModule,
     DatabaseModule.forTypeOrmRoot({
       entities: [Order, OrderItem],
@@ -31,8 +34,6 @@ import { ProductServiceRepository } from 'apps/product-service/src/product-servi
     DatabaseModule.forTypeOrmFeature([Order, OrderItem]),
     MongooseModule.forFeature([{ name: UserDocument.name, schema: UserSchema }, { name: ProductServiceDocument.name, schema: ProductSchema }]),
     CacheModule,
-    WishlistModule,
-    CartModule,
     UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
@@ -58,18 +59,12 @@ import { ProductServiceRepository } from 'apps/product-service/src/product-servi
     ]),
   ],
   providers: [OrderServiceService, OrderRepository, UsersRepository, ProductServiceRepository, JwtAuthGuard],
-  controllers: [OrderServiceController, CartController, WishlistController],
+  controllers: [OrderServiceController, WishlistController],
 })
 
 export class OrderServiceModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
     .apply(RedisCacheMiddleware)
-    // .forRoutes(
-    //   {
-    //     path: 'order-service',
-    //     method: RequestMethod.GET
-    //   },
-    //   { path: 'order-service/:id', method: RequestMethod.GET },)
     }
 }

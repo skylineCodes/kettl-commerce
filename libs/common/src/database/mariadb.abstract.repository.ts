@@ -6,6 +6,7 @@ import {
   FindOneOptions,
   FindManyOptions,
   DeleteResult,
+  FindOptionsWhere,
 } from 'typeorm';
 
 export abstract class MariadbAbstractRepository<TEntity> {
@@ -90,14 +91,18 @@ export abstract class MariadbAbstractRepository<TEntity> {
     }
   }
 
-  async findAndUpdate(
-    conditions: FindOneOptions<TEntity>,
+  async update(
+    conditions: Partial<TEntity>,
     updateData: DeepPartial<TEntity>,
     options?: SaveOptions,
   ): Promise<TEntity> {
-    try {
+    try {      
       // Find the entity based on the provided conditions
-      const entity = await this.findOne(conditions);
+      const entity = await this.repository.findOne({
+        where: conditions as FindOptionsWhere<TEntity>,
+      });
+
+      console.log(entity);
   
       if (!entity) {
         this.logger.warn('Entity not found for update', conditions);
@@ -115,7 +120,6 @@ export abstract class MariadbAbstractRepository<TEntity> {
     }
   }
   
-
   async findOneAndDelete(
     conditions: FindOneOptions<TEntity>,
   ): Promise<DeleteResult> {

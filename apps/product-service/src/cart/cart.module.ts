@@ -1,8 +1,8 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { CartController } from './cart.controller';
 import { CartService } from './cart.service';
-import { CartRepository } from './cart.repository';
-import { Cart, CartProduct } from './models/cart.schema';
+import { CartDocumentRepository } from './cart.repository';
+import { CartDocument, CartSchema } from './models/cart.schema';
 import { AUTH_SERVICE, DatabaseModule, JwtAuthGuard } from '@app/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
@@ -11,17 +11,17 @@ import { UserDocument, UserSchema } from 'apps/auth/src/users/models/user.schema
 import { ProductSchema, ProductServiceDocument } from 'apps/product-service/src/models/product-service.schema';
 import { ProductServiceRepository } from 'apps/product-service/src/product-service.repository';
 import { UsersRepository } from 'apps/auth/src/users/users.repository';
-import { WishlistModule } from '../wishlist/wishlist.module';
+import { CartProductDocument, CartProductSchema } from './models/cart-product.schema';
 
 @Module({
   imports: [
-    forwardRef(() => WishlistModule),
     DatabaseModule,
-    DatabaseModule.forTypeOrmRoot({
-      entities: [Cart, CartProduct],
-      type: 'mariadb',
-    }),
-    DatabaseModule.forTypeOrmFeature([Cart, CartProduct]),
+    DatabaseModule.forFeature([
+      { name: CartDocument.name, schema: CartSchema },
+    ]),
+    DatabaseModule.forFeature([
+      { name: CartProductDocument.name, schema: CartProductSchema },
+    ]),
     MongooseModule.forFeature([{ name: UserDocument.name, schema: UserSchema }, { name: ProductServiceDocument.name, schema: ProductSchema }]),
     ClientsModule.registerAsync([
       {
@@ -37,8 +37,8 @@ import { WishlistModule } from '../wishlist/wishlist.module';
       },
     ]),
   ],
-  providers: [CartService, CartRepository, UsersRepository, ProductServiceRepository, JwtAuthGuard],
-  exports: [CartService, CartRepository],
+  providers: [CartDocumentRepository, CartService, UsersRepository, ProductServiceRepository, JwtAuthGuard],
+  exports: [CartService, CartDocumentRepository],
   controllers: [CartController],
 })
 export class CartModule {}

@@ -1,9 +1,15 @@
+import { Prop } from "@nestjs/mongoose";
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from "class-validator";
+import { SchemaTypes, Types } from "mongoose";
 
 
-export class CartProductDto {
+export class CartProductDocumentDto {
+  @IsOptional()
+  @Prop({ type: SchemaTypes.ObjectId })
+  _id: Types.ObjectId;
+
   @ApiProperty({ example: "66c73238bc684d9aeeae9e0a" })
   @IsNotEmpty()
   @IsString()
@@ -18,6 +24,10 @@ export class CartProductDto {
   @IsNotEmpty()
   @IsNumber()
   subtotal: number;
+
+  @ApiProperty({ type: String, example: "60c72b2f5f1b2c001fdd92ab" })
+  @Prop({ type: Types.ObjectId, ref: 'Cart' })
+  cart: Types.ObjectId;
 }
 
 export class CreateCartDto {
@@ -39,8 +49,8 @@ export class CreateCartDto {
   ]})
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CartProductDto)
-  products: CartProductDto[];
+  @Type(() => CartProductDocumentDto)
+  products: CartProductDocumentDto[];
   
   @ApiProperty({ example: 8500.00 })
   @IsNotEmpty()

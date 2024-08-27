@@ -163,6 +163,7 @@ services:
       - elk
 
   mongo:
+    container_name: mongo
     image: mongo:5
     ports:
       - '27017:27017'

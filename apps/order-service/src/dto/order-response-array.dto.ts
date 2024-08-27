@@ -38,6 +38,11 @@ export class OrderResponseDto {
     updatedAt: Date;
 }
 
+export class TrackOrderResponseDto {
+    @ApiProperty({ example: 'shipped' })
+    status: string;
+}
+
 export class OrderResponseDtoR {
     @ApiProperty({ example: 200 })
     status: number;
@@ -52,4 +57,12 @@ export class SingleOrderResponseDtoR {
 
     @ApiProperty({ type: OrderResponseDto })
     data?: OrderResponseDto;
+}
+
+export class TrackOrderResponseDtoR {
+    @ApiProperty({ example: 200 })
+    status: number;
+
+    @ApiProperty({ type: TrackOrderResponseDto })
+    data?: TrackOrderResponseDto;
 }

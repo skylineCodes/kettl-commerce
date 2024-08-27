@@ -7,8 +7,8 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { CartProductDto } from './create-cart.dto';
 import { ApiProperty } from '@nestjs/swagger';
+import { CartProductDocumentDto } from './create-cart.dto';
 
 export class UpdateCartDto {
   @IsOptional()
@@ -29,8 +29,8 @@ export class UpdateCartDto {
   ]})
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CartProductDto)
-  products: CartProductDto[];
+  @Type(() => CartProductDocumentDto)
+  products: CartProductDocumentDto[];
   
   @ApiProperty({ example: 8500.00 })
   @IsNotEmpty()

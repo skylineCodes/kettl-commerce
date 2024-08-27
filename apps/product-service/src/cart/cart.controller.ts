@@ -36,6 +36,7 @@ export class CartController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Add To Cart' })
   @ApiResponse({
     status: 201,
@@ -58,28 +59,19 @@ export class CartController {
     return response.status(cartResponse.status).json(cartResponse);
   }
 
-  @Patch()
-  @ApiOperation({ summary: 'Update Cart' })
-  @ApiResponse({
-    status: 201,
-    description: 'Cart added successfully!',
-  })
-  @ApiResponse({
-    status: 403,
-    description: 'Forbidden resource',
-  })
-  async updateCart(
-    @CurrentUser() user: GetUserDto,
-    @Body() updateCartDto: UpdateCartDto,
-    @Res() response: Response,
-  ) {
-    updateCartDto.userId = user._id;
+  // @Patch()
+  // async updateCart(
+  //   @CurrentUser() user: GetUserDto,
+  //   @Body() updateCartDto: UpdateCartDto,
+  //   @Res() response: Response,
+  // ) {
+  //   updateCartDto.userId = user._id;
 
-    const cartResponse: CartR =
-      await this.cartService.addOrUpdateCart(updateCartDto);
+  //   const cartResponse: CartR =
+  //     await this.cartService.addOrUpdateCart(updateCartDto);
 
-    return response.status(cartResponse.status).json(cartResponse);
-  }
+  //   return response.status(cartResponse.status).json(cartResponse);
+  // }
 
   @Delete(':productId')
   @ApiOperation({ summary: 'Remove Product From Cart' })

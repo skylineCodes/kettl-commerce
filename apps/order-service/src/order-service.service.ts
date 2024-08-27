@@ -120,7 +120,7 @@ export class OrderServiceService {
     }
   }
 
-  async update(id: number, updateOrderDto: UpdateOrderDto): Promise<OrderR> {
+  async update(user: UserDto, id: number, updateOrderDto: UpdateOrderDto): Promise<OrderR> {
     try {
       const updatedOrder = await this.ordersRepository.findOne({
         where: { id },
@@ -129,10 +129,8 @@ export class OrderServiceService {
       if (!updatedOrder) {
         throw new NotFoundException(`Order with ID ${id} not found`);
       }
-
-      await this.ordersRepository.findAndUpdate({ where: {
-        id
-      }}, updateOrderDto);
+      
+      const updated = await this.ordersRepository.update({ id }, updateOrderDto);
 
       return {
         status: 200,
@@ -172,9 +170,15 @@ export class OrderServiceService {
 
   async remove(id: number, updateOrderDto: UpdateOrderDto): Promise<OrderR> {
     try {
-      await this.ordersRepository.findAndUpdate({ where: {
-        id
-      }}, updateOrderDto);
+      const cancelledOrder = await this.ordersRepository.findOne({
+        where: { id },
+      });
+
+      if (!cancelledOrder) {
+        throw new NotFoundException(`Order with ID ${id} not found`);
+      }
+
+      await this.ordersRepository.update({ id }, updateOrderDto);
 
       return {
         status: 200,

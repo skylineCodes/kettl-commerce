@@ -6,7 +6,7 @@ import { CreateProductServiceDto } from './dto/create-product-service.dto';
 import { DynamicPricingDto } from './dto/discount-product-dto';
 import { PaginateDto } from './dto/paginate-product-service.dto';
 import { ConfigService } from '@nestjs/config';
-import { LoggerModule, UserDto } from '@app/common';
+import { UserDto } from '@app/common';
 
 @Injectable()
 export class ProductServiceService {
