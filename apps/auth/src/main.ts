@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { ConfigService } from '@nestjs/config';
 import { Transport } from '@nestjs/microservices';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AuthModule, { bufferLogs: true });
@@ -25,6 +26,15 @@ async function bootstrap() {
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
   // app.useLogger(app.get(Logger));
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Auth Service API')
+    .setDescription('The Auth API description')
+    .setVersion('1.0')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('auth-service-docs', app, document);
 
   await app.startAllMicroservices();
 

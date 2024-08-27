@@ -25,7 +25,7 @@ import { CartDocumentRepository } from './cart/cart.repository';
     ]),
     MongooseModule.forFeature([{ name: UserDocument.name, schema: UserSchema }, { name: ProductServiceDocument.name, schema: ProductSchema }]),
     CacheModule,
-    UsersModule,
+    // UsersModule,
     LoggerModule,
     ConfigModule.forRoot({
       isGlobal: true,

@@ -6,13 +6,24 @@ import { UserDocument, UserR } from './users/models/user.schema';
 import { Response } from 'express';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(LocalAuthGuard)
   @Post('login')
+  @UseGuards(LocalAuthGuard)
+  @ApiTags('Auth')
+  @ApiOperation({ summary: 'Sign In' })
+  @ApiResponse({
+    status: 200,
+    description: 'User logged in successfully!'
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden resource',
+  })
   async login(
     @CurrentUser() user: UserDocument,
     @Res({ passthrough: true }) response: Response,

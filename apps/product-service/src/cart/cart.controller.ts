@@ -59,20 +59,6 @@ export class CartController {
     return response.status(cartResponse.status).json(cartResponse);
   }
 
-  // @Patch()
-  // async updateCart(
-  //   @CurrentUser() user: GetUserDto,
-  //   @Body() updateCartDto: UpdateCartDto,
-  //   @Res() response: Response,
-  // ) {
-  //   updateCartDto.userId = user._id;
-
-  //   const cartResponse: CartR =
-  //     await this.cartService.addOrUpdateCart(updateCartDto);
-
-  //   return response.status(cartResponse.status).json(cartResponse);
-  // }
-
   @Delete(':productId')
   @ApiOperation({ summary: 'Remove Product From Cart' })
   @ApiResponse({

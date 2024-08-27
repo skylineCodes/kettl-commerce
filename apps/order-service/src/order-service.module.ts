@@ -34,7 +34,7 @@ import { ProductServiceRepository } from 'apps/product-service/src/product-servi
     DatabaseModule.forTypeOrmFeature([Order, OrderItem]),
     MongooseModule.forFeature([{ name: UserDocument.name, schema: UserSchema }, { name: ProductServiceDocument.name, schema: ProductSchema }]),
     CacheModule,
-    UsersModule,
+    // UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({

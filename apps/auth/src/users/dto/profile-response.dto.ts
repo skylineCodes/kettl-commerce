@@ -1,25 +1,22 @@
 import {
-  IsString,
-  IsEmail,
-  IsArray,
-  IsOptional,
-  IsBoolean,
-  IsDate,
-  ValidateNested,
-} from 'class-validator';
-import { Type } from 'class-transformer';
-import { Types } from 'mongoose';
-import { AddressDto } from './create-address.dto';
+    IsString,
+    IsEmail,
+    IsArray,
+    IsOptional,
+    IsBoolean,
+    IsDate,
+    ValidateNested,
+  } from 'class-validator';
+  import { Type } from 'class-transformer';
+  import { Types } from 'mongoose';
+  import { AddressDto } from './create-address.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateUserDto {
-  @ApiProperty({ example: "onako@gmail.com" })
-  @IsEmail()
+export class UserProfileResponseR {
+ @ApiProperty({ example: 'onako@gmail.com' })
+ @IsEmail()
   email: string;
 
-  @IsString()
-  password: string;
-  
   @ApiProperty({ example: 'Onakoya' })
   @IsString()
   firstName: string;
