@@ -1,73 +1,200 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+Kettl Commerce API
+==================
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Kettl Commerce is a scalable, modular e-commerce API built using the Nest.js framework with a microservices architecture. This API is designed to handle various aspects of an e-commerce platform, including product management, order processing, user authentication, and notifications. The project leverages Docker for environment setup, MongoDB for product and user data, MariaDB for order data, Redis for caching, and the ELK stack for logging and monitoring.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Table of Contents
+-----------------
 
-## Description
+-   [Project Overview](#project-overview)
+-   [Features](#features)
+-   [Technology Stack](#technology-stack)
+-   [Architecture](#architecture)
+-   [Setup & Installation](#setup--installation)
+    -   [Prerequisites](#prerequisites)
+    -   [Environment Variables](#environment-variables)
+    -   [Installation](#installation)
+-   [Running the Project](#running-the-project)
+    -   [Using Docker](#using-docker)
+    -   [Without Docker](#without-docker)
+-   [API Documentation](#api-documentation)
+-   [Testing](#testing)
+-   [Contributing](#contributing)
+-   [License](#license)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Project Overview
+----------------
 
-## Installation
+Kettl Commerce API is a robust and flexible backend solution for e-commerce platforms. It is designed to manage products, orders, user authentication, and notifications. The project is built on a microservices architecture using Nest.js, allowing each service to be developed, deployed, and scaled independently.
 
-```bash
-$ npm install
-```
+Features
+--------
 
-## Running the app
+-   **Microservices Architecture**: Separate services for product management, order processing, user authentication, and notifications.
+-   **Event-Driven Communication**: Services communicate asynchronously using Nest.js Event Pattern.
+-   **Dockerized Environment**: Entire project is containerized using Docker and Docker Compose for easy setup and scaling.
+-   **Database Management**:
+    -   MongoDB for managing products and users.
+    -   MariaDB for order processing.
+    -   Redis for caching.
+-   **Logging & Monitoring**: Integrated ELK stack (Elasticsearch, Logstash, Kibana) for log aggregation, monitoring, and visualization.
+-   **Unit Testing**: Comprehensive unit tests for services and modules using Jest.
+-   **Swagger Documentation**: API documentation generated using Swagger.
 
-```bash
-# development
-$ npm run start
+Technology Stack
+----------------
 
-# watch mode
-$ npm run start:dev
+-   **Framework**: [Nest.js](https://nestjs.com/)
+-   **Databases**:
+    -   [MongoDB](https://www.mongodb.com/)
+    -   [MariaDB](https://mariadb.org/)
+    -   [Redis](https://redis.io/)
+-   **Containers**: [Docker](https://www.docker.com/)
+-   **Logging & Monitoring**: [ELK Stack](https://www.elastic.co/what-is/elk-stack) (Elasticsearch, Logstash, Kibana)
+-   **Testing**: [Jest](https://jestjs.io/)
+-   **Documentation**: [Swagger](https://swagger.io/)
 
-# production mode
-$ npm run start:prod
-```
+Architecture
+------------
 
-## Test
+Kettl Commerce API is based on a microservices architecture with the following services:
 
-```bash
-# unit tests
-$ npm run test
+1.  **Product Service**: Manages products, including CRUD operations and dynamic pricing.
+2.  **Order Service**: Handles order processing, status updates, and order tracking.
+3.  **Users & Auth Service**: Manages user registration, authentication, and profile management.
+4.  **Notification Service**: Sends notifications based on various triggers like order confirmations and password resets.
 
-# e2e tests
-$ npm run test:e2e
+Each service is containerized using Docker, and they communicate asynchronously using the Nest.js Event Pattern.
 
-# test coverage
-$ npm run test:cov
-```
+Setup & Installation
+--------------------
 
-## Support
+### Prerequisites
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+-   Docker and Docker Compose installed on your machine.
+-   [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed.
+-   [Git](https://git-scm.com/) installed.
 
-## Stay in touch
+### Environment Variables
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Each microservice requires a `.env` file with specific configurations. Here's a summary of the environment variables needed:
 
-## License
+#### General
 
-Nest is [MIT licensed](LICENSE).
+-   `NODE_ENV=development`
+-   `JWT_SECRET=your_jwt_secret`
+-   `JWT_EXPIRATION=3600`
+
+#### MongoDB (Product & User Services)
+
+-   `MONGODB_URI=mongodb://mongo:27017/kettl-commerce`
+
+#### MariaDB (Order Service)
+
+-   `MARIADB_HOST=mariadb`
+-   `MARIADB_PORT=3306`
+-   `MARIADB_USER=admin`
+-   `MARIADB_PASSWORD=kettl-commerce-2202`
+-   `MARIADB_DB=order-service`
+
+#### Redis
+
+-   `REDIS_HOST=redis`
+-   `REDIS_PORT=6379`
+
+#### ELK Stack
+
+-   `ELASTICSEARCH_URL=http://elasticsearch:9200`
+
+You can get the necessary `.env` files from the project admin or generate them based on the examples provided above.
+
+### Installation
+
+1.  **Clone the repository**:
+
+    bash
+
+    Copy code
+
+    `git clone https://github.com/your-username/kettl-commerce.git
+    cd kettl-commerce`
+
+2.  **Install dependencies**:
+
+    bash
+
+    Copy code
+
+    `npm install`
+
+3.  **Set up environment variables**:
+
+    -   Create `.env` files for each service based on the above configuration.
+
+Running the Project
+-------------------
+
+### Using Docker
+
+1.  **Build and start the containers**:
+
+    bash
+
+    Copy code
+
+    `docker-compose up --build`
+
+2.  **Access the services**:
+
+    -   **Product Service**: `http://localhost:3001`
+    -   **Order Service**: `http://localhost:3005`
+    -   **Auth Service**: `http://localhost:3002`
+    -   **Notification Service**: `http://localhost:3003`
+    -   **Kibana Dashboard**: `http://localhost:5601`
+
+### Without Docker
+
+1.  **Start MongoDB** and **MariaDB** on your local machine.
+2.  **Run each service** individually:
+
+    bash
+
+    Copy code
+
+    `npm run start:dev product-service
+    npm run start:dev order-service
+    npm run start:dev auth-service
+    npm run start:dev notification-service`
+
+API Documentation
+-----------------
+
+The API documentation is generated using Swagger. Once the services are running, you can access the Swagger documentation at the following URLs:
+
+-   **Product Service**: `http://localhost:3001/api-docs`
+-   **Order Service**: `http://localhost:3005/api-docs`
+-   **Auth Service**: `http://localhost:3002/api-docs`
+-   **Notification Service**: `http://localhost:3003/api-docs`
+
+Testing
+-------
+
+To run the unit tests for the services, use the following command:
+
+bash
+
+Copy code
+
+`npm run test`
+
+The tests are designed to cover all core functionalities, ensuring the reliability of each microservice.
+
+Contributing
+------------
+
+Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
+
+License
+-------
+
+This project is licensed under the MIT License.
