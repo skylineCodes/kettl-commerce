@@ -106,7 +106,7 @@ Each microservice requires a `.env` file with specific configurations. Here's a 
 
 -   `ELASTICSEARCH_URL=http://elasticsearch:9200`
 
-You can get the necessary `.env` files from the project admin or generate them based on the examples provided above.
+You can generate the necessary `.env` files from the `.env.example` added to each service.
 
 ### Installation
 
@@ -129,7 +129,7 @@ You can get the necessary `.env` files from the project admin or generate them b
 
 3.  **Set up environment variables**:
 
-    -   Create `.env` files for each service based on the above configuration.
+    -   Create `.env` files for each service based on the provided `.env.example` in each service root folder.
 
 Running the Project
 -------------------
@@ -150,6 +150,7 @@ Running the Project
     -   **Order Service**: `http://localhost:3005`
     -   **Auth Service**: `http://localhost:3002`
     -   **Notification Service**: `http://localhost:3003`
+    -   **ElasticSearch Index**: `http://localhost:9200/kettl-commerce-*/_search?pretty`
     -   **Kibana Dashboard**: `http://localhost:5601`
 
 ### Without Docker
@@ -171,10 +172,10 @@ API Documentation
 
 The API documentation is generated using Swagger. Once the services are running, you can access the Swagger documentation at the following URLs:
 
--   **Product Service**: `http://localhost:3001/api-docs`
--   **Order Service**: `http://localhost:3005/api-docs`
--   **Auth Service**: `http://localhost:3002/api-docs`
--   **Notification Service**: `http://localhost:3003/api-docs`
+-   **Product Service**: `http://localhost:3001/product-service-docs`
+-   **Order Service**: `http://localhost:3005/order-service-docs`
+-   **Auth Service**: `http://localhost:3002/auth-service-docs`
+-   **Notification Service**: `No documentation for Notification service`
 
 Testing
 -------
