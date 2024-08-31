@@ -11,7 +11,6 @@ import { ProductSchema, ProductServiceDocument } from 'apps/product-service/src/
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersRepository } from 'apps/auth/src/users/users.repository';
 import { ProductServiceRepository } from 'apps/product-service/src/product-service.repository';
-import { CartModule } from '../cart/cart.module';
 
 @Module({
   imports: [

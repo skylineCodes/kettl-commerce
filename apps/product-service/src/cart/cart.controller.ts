@@ -3,7 +3,6 @@ import { Controller, UseGuards, Get, Post, Patch, Param, Delete, Body, Res } fro
 import { CartService } from './cart.service';
 import { GetUserDto } from 'apps/auth/src/users/dto/get-user.dto';
 import { CreateCartDto } from './dto/create-cart.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
 import { CartR } from './models/cart.schema';
 import { Response } from 'express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';

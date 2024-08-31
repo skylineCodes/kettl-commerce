@@ -75,26 +75,31 @@ export class UsersService {
 
   async setAuthToken(
     user: UserDocument,
-    response: Response | any,
+    response: Response,
   ): Promise<void> {
     try {
       const tokenPayload = {
         userId: user._id.toHexString(),
       };
-
+      
       const expires = new Date();
+      
       expires.setSeconds(
         expires.getSeconds() + this.configService.get('JWT_EXPIRATION'),
       );
-
+      
       const token = this.jwtService.sign(tokenPayload);
 
-      return response.cookie('Authentication', token, {
+      response.cookie('Authentication', token, {
         httpOnly: true,
         expires,
       });
+
+      return;
     } catch (error) {
-      throw error;
+      // Handle specific error scenarios if necessary
+      console.error('Error setting auth token:', error);
+      throw new Error('Failed to set authentication token');
     }
   }
 

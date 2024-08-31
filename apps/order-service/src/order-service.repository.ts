@@ -10,8 +10,8 @@ export class OrderRepository extends MariadbAbstractRepository<Order> {
 
   constructor(
     @InjectRepository(Order)
-    orderServiceModel: Repository<Order>,
+    orderRepository: Repository<Order>,
   ) {
-    super(orderServiceModel);
+    super(orderRepository);
   }
 }

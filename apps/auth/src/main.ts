@@ -29,7 +29,11 @@ async function bootstrap() {
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Auth Service API')
-    .setDescription('The Auth API description')
+    .setDescription(`The Users service provides endpoints to manage user-related functionalities. 
+    It consists of two main submodules: 
+    - **Auth**: Contains endpoints for authentication, including the login endpoint.
+    - **Users**: Handles other user-related operations such as registration, profile management, and user details retrieval.`)
+    .addTag('Base URL', 'http://localhost/')
     .setVersion('1.0')
     .build();
 

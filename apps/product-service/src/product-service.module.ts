@@ -14,7 +14,6 @@ import { UserDocument, UserSchema } from 'apps/auth/src/users/models/user.schema
 import { CartController } from './cart/cart.controller';
 import { UsersRepository } from 'apps/auth/src/users/users.repository';
 import { UsersModule } from 'apps/auth/src/users/users.module';
-import { CartDocumentRepository } from './cart/cart.repository';
 
 @Module({
   imports: [

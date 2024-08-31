@@ -19,7 +19,13 @@ async function bootstrap() {
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Product Service API')
-    .setDescription('The Product API description')
+    .setDescription(
+      `The Product Service manages product-related operations and shopping cart functionalities.
+      It includes two main modules:
+      - **Product Module**: Provides endpoints for creating, updating, retrieving, and managing products.
+      - **Cart Module**: Handles shopping cart operations, including adding products to the cart, updating cart items, and viewing cart details.`
+    )
+    .addTag('Base URL', 'http://localhost/')
     .setVersion('1.0')
     .build();
 

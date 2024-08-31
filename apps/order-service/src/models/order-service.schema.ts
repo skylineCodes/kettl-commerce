@@ -11,7 +11,6 @@ import { IsArray, IsEnum, IsNumber, IsString, ValidateNested } from 'class-valid
 import { Type } from 'class-transformer';
 import { Address } from 'apps/auth/src/users/models/address.schema';
 import { ApiProperty } from '@nestjs/swagger';
-import { UserDocument } from 'apps/auth/src/users/models/user.schema';
 
 @Entity()
 export class Order {

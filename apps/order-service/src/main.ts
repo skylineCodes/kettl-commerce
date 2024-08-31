@@ -19,7 +19,13 @@ async function bootstrap() {
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Order Service API')
-    .setDescription('The Order API description')
+    .setDescription(
+      `The Order Service handles operations related to managing orders and wishlists. 
+      It includes two main modules: 
+      - **Order Module**: Provides endpoints to create, update, retrieve, and manage orders.
+      - **Wishlist Module**: Manages users' wishlists, including adding items to the wishlist and retrieving wishlist details.`
+    )
+    .addTag('Base URL', 'http://localhost/')
     .setVersion('1.0')
     .build();
 

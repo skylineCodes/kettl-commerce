@@ -9,8 +9,6 @@ import { LoggerModule } from '@app/common';
 import { OrderItem } from './models/order-item.schema';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { OrderRepository } from './order-service.repository';
-import { CartModule } from './cart/cart.module';
-import { CartController } from './cart/cart.controller';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { WishlistController } from './wishlist/wishlist.controller';
 import { RedisCacheMiddleware } from 'middleware/redis-cache.middleware';
@@ -20,12 +18,10 @@ import { UsersModule } from 'apps/auth/src/users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ProductSchema, ProductServiceDocument } from 'apps/product-service/src/models/product-service.schema';
 import { ProductServiceRepository } from 'apps/product-service/src/product-service.repository';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
-    // WishlistModule,
-    // CartModule,
-    forwardRef(() => WishlistModule),
     DatabaseModule,
     DatabaseModule.forTypeOrmRoot({
       entities: [Order, OrderItem],
@@ -34,6 +30,7 @@ import { ProductServiceRepository } from 'apps/product-service/src/product-servi
     DatabaseModule.forTypeOrmFeature([Order, OrderItem]),
     MongooseModule.forFeature([{ name: UserDocument.name, schema: UserSchema }, { name: ProductServiceDocument.name, schema: ProductSchema }]),
     CacheModule,
+    WishlistModule,
     // UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,

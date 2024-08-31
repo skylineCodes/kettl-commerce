@@ -9,16 +9,16 @@ import { UsersRepository } from 'apps/auth/src/users/users.repository';
 import { Types } from 'mongoose';
 import { ProductServiceRepository } from 'apps/product-service/src/product-service.repository';
 import { OrderItem } from './models/order-item.schema';
-import { Product } from 'apps/product-service/src/models/product-service.schema';
 
 @Injectable()
 export class OrderServiceService {
   private readonly logger = new Logger(OrderServiceService.name);
+
   constructor(
     @InjectRepository(Order)
-    private ordersRepository: OrderRepository,
-    private usersRepository: UsersRepository,
+    private readonly ordersRepository: OrderRepository,
     private productServiceRepository: ProductServiceRepository,
+    private usersRepository: UsersRepository,
   ) {}
 
   async findAll(user: UserDto): Promise<OrderR | any> {
