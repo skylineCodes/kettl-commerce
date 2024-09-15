@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { AbstractDocument } from '@app/common';
-import { Document, Types } from 'mongoose';
+import { Types } from 'mongoose';
 import { Address, AddressSchema } from './address.schema';
 import { Exclude } from 'class-transformer';
 import { IsOptional } from 'class-validator';
@@ -10,7 +10,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class UserDocument extends AbstractDocument {
   @ApiProperty({ example: '66c72ef1591afcd4c692706c' })
   @IsOptional()
-  _id: Types.ObjectId;
+  _id?: Types.ObjectId;
   
   @ApiProperty({ example: 'onako@gmail.com' })
   @Prop({ required: true, unique: true })
@@ -32,8 +32,8 @@ export class UserDocument extends AbstractDocument {
   @Prop()
   phoneNumber?: string;
   
-  @Prop({ type: AddressSchema })
-  address?: Address;
+  @Prop({ type: AddressSchema, required: false })
+  address?: any;
   
   @ApiProperty({ example: 'customer' })
   @Prop({ type: [String], default: ['customer'] })

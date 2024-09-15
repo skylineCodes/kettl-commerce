@@ -6,9 +6,9 @@ import { SchemaTypes, Types } from "mongoose";
 
 
 export class CartProductDocumentDto {
-  @IsOptional()
-  @Prop({ type: SchemaTypes.ObjectId })
-  _id: Types.ObjectId;
+  // @IsOptional()
+  // @Prop({ type: SchemaTypes.ObjectId })
+  // _id: Types.ObjectId;
 
   @ApiProperty({ example: "66c73238bc684d9aeeae9e0a" })
   @IsNotEmpty()

@@ -12,4 +12,9 @@ export class NotificationsController {
   async notifyEmail(@Payload() data: NotifyEmailDTO) {
     this.notificationsService.notifyEmail(data);
   }
+
+  @EventPattern('order.created')
+  handleOrderCreated(@Payload() data: any) {
+    this.notificationsService.handleOrderCreatedEvent(data)
+  }
 }

@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { NotificationsModule } from './notifications.module';
-import { Transport } from '@nestjs/microservices';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { ValidationPipe } from '@nestjs/common';
@@ -14,6 +14,17 @@ async function bootstrap() {
     options: {
       host: '0.0.0.0',
       port: configService.get('PORT'),
+    },
+  });
+
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: ['amqp://admin:kettl-commerce-2202@rabbitmq:5672'],
+      queue: 'orders_queue',
+      queueOptions: {
+        durable: false,
+      },
     },
   });
 

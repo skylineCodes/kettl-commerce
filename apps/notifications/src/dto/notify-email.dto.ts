@@ -1,12 +1,19 @@
-import { IsEmail, IsString } from "class-validator";
+import { IsEmail, IsOptional, IsString } from "class-validator";
 
 export class NotifyEmailDTO {
   @IsEmail()
   email: string;
 
   @IsString()
-  subject: string;
+  subject?: string;
 
   @IsString()
-  text: string;
+  @IsOptional()
+  text?: string;
+
+  @IsOptional()
+  html?: any;
+
+  @IsOptional()
+  attachments?: any;
 }

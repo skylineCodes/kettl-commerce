@@ -7,12 +7,14 @@ import { UsersRepository } from './users.repository';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { Address, AddressSchema } from './models/address.schema';
 
 @Module({
   imports: [
     DatabaseModule,
     DatabaseModule.forFeature([
       { name: UserDocument.name, schema: UserSchema },
+      { name: Address.name, schema: AddressSchema },
     ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],

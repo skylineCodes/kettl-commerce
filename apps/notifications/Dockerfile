@@ -2,6 +2,18 @@ FROM node:alpine As development
 
 WORKDIR /usr/src/app
 
+# Install dependencies and Chromium
+RUN apk add --no-cache \
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont
+
+# Set the Puppeteer environment variable to use the installed Chromium
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
 COPY package*.json ./
 
 RUN npm install

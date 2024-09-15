@@ -29,8 +29,8 @@ export class UpdateUserDto {
   phoneNumber?: string;
 
   @IsOptional()
-  @Type(() => AddressDto)
-  address?: AddressDto;
+  // @Type(() => AddressDto)
+  address?: any;
 
   @ApiProperty({ example: 'customer' })
   @IsOptional()

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+</head>
+
+<body style="margin: 0; padding: 0; background-color: #f2f2f2; font-family: Arial, sans-serif;">
+
+    <table width="100%" cellspacing="0" cellpadding="0" style="background-color: #f2f2f2; margin: 0; padding: 0;">
+        <tr>
+            <td>
+                <table width="100%" cellpadding="0" cellspacing="0"
+                    style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #ddd; padding: 0;">
+
+                    <!-- Header Section -->
+                    <tr>
+                        <td align="center" style="padding: 20px;">
+                            <img src="https://firebasestorage.googleapis.com/v0/b/mizright-3949d.appspot.com/o/images%2Fkettl-white-banner.jpg?alt=media&token=f1c42fd6-95bc-4ac9-9cb2-2de9e0cdfb4a"
+                                alt="kettl-commerce-logo" style="max-width: 100%; height: auto;">
+                            <h2 style="font-size: 24px; margin: 10px 0; color: #333;">Thank You for Your Order!</h2>
+                        </td>
+                    </tr>
+
+                    <!-- Content Section -->
+                    <tr>
+                        <td style="padding: 20px; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;">
+
+                            <p style="font-size: 16px; margin: 0 0 10px;">Hi {{ customer_name }},</p>
+                            <p style="font-size: 16px; margin: 0 0 20px;">
+                                Thank you for shopping on Kettl commerce! Your order <strong>#{{ order_id }}</strong> has been
+                                confirmed successfully.
+                                It will be packed and shipped as soon as possible.
+                            </p>
+
+                            <!-- Order Details -->
+                            <h3 style="font-size: 18px; margin: 0 0 10px;">Order Details:</h3>
+                            <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
+                                <tr>
+                                    <th align="left"
+                                        style="padding: 10px; background-color: #f8f8f8; border-bottom: 1px solid #ddd; font-weight: bold;">
+                                        Item</th>
+                                    <th align="left"
+                                        style="padding: 10px; background-color: #f8f8f8; border-bottom: 1px solid #ddd; font-weight: bold;">
+                                        Quantity</th>
+                                    <th align="left"
+                                        style="padding: 10px; background-color: #f8f8f8; border-bottom: 1px solid #ddd; font-weight: bold;">
+                                        Price</th>
+                                </tr>
+                                {{ order_items }}
+                                <!-- <tr>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">Water Based Sex Lubricant
+                                        (200ML)</td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">1</td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">₦3,500</td>
+                                </tr> -->
+                            </table>
+
+                            <!-- Summary -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 20px;">
+                                <tr>
+                                    <td style="padding: 10px;">Delivery Fees:</td>
+                                    <td align="right" style="padding: 10px;">{{ currency }} {{ delivery_fees }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px;">Discount on Delivery:</td>
+                                    <td align="right" style="padding: 10px;">{{ currency }} {{ delivery_discount }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px;">Discount:</td>
+                                    <td align="right" style="padding: 10px;">{{ currency }} {{ discount }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px;">Payment Method:</td>
+                                    <td align="right" style="padding: 10px;">{{ payment_method }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="total" style="padding: 10px; font-weight: bold;">Total:</td>
+                                    <td align="right" style="padding: 10px; font-weight: bold;">{{ currency }} {{ total_price }}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Footer Section -->
+                    <tr>
+                        <td style="padding: 20px; text-align: center;">
+                            <p style="font-size: 16px; margin: 0;">Happy Shopping!</p>
+                            <p style="font-size: 16px; margin: 0;">Warm Regards, Kettl Team</p>
+
+                            <!-- <table cellpadding="0" cellspacing="0" style="margin-top: 20px;">
+                                <tr>
+                                    <td align="center">
+                                        <img src="https://via.placeholder.com/40.png?text=Quality" alt="Quality Icon"
+                                            style="margin: 0 10px;">
+                                        <img src="https://via.placeholder.com/40.png?text=Easy%20Return"
+                                            alt="Easy Return Icon" style="margin: 0 10px;">
+                                        <img src="https://via.placeholder.com/40.png?text=Fast%20Delivery"
+                                            alt="Fast Delivery Icon" style="margin: 0 10px;">
+                                        <img src="https://via.placeholder.com/40.png?text=Jumia%20Express"
+                                            alt="Jumia Express Icon" style="margin: 0 10px;">
+                                    </td>
+                                </tr>
+                            </table> -->
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+</body>
+
+</html>

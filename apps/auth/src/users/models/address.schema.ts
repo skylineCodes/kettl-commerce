@@ -4,19 +4,24 @@ import { ApiProperty } from '@nestjs/swagger';
 @Schema({ _id: false })
 export class Address {
   @ApiProperty({ example: 'Kolade estate, Gof area.' })
-  street: string;
+  @Prop()
+  street?: string;
 
   @ApiProperty({ example: 'Osogbo' })
-  city: string;
+  @Prop()
+  city?: string;
 
   @ApiProperty({ example: 'Osun' })
-  state: string;
+  @Prop()
+  state?: string;
 
   @ApiProperty({ example: '10011' })
-  postalCode: string;
+  @Prop()
+  postalCode?: string;
 
   @ApiProperty({ example: 'Nigeria' })
-  country: string;
+  @Prop()
+  country?: string;
 }
 
 export const AddressSchema = SchemaFactory.createForClass(Address);

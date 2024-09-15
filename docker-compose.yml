@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   nginx:
@@ -87,6 +86,21 @@ services:
       REDIS_PORT: 6379
     networks:
       - elk
+
+  payments:
+    container_name: payments
+    build:
+      context: .
+      dockerfile: ./apps/payments/Dockerfile
+      target: development
+    command: npm run start:dev payments
+    env_file:
+      - ./apps/payments/.env
+    volumes:
+      - .:/usr/src/app/payments
+      - node_modules:/usr/src/app/payments/node_modules
+    networks:
+      - elk
   
   notifications:
     container_name: notifications
@@ -101,11 +115,15 @@ services:
       - .:/usr/src/app/notifications
       - ./libs/common/src/logger/logs:/usr/src/app/libs/common/src/logger/logs
       - node_modules:/usr/src/app/notifications/node_modules
+      - /usr/src/app/.cache/puppeteer:/usr/src/app/.cache/puppeteer
     depends_on:
       - redis
+      - rabbitmq
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      RABBITMQ_URL: 'amqp://admin:kettl-commerce-2202@rabbitmq:5672'
+      CHROME_PATH: /usr/bin/chromium-browser
     networks:
       - elk
   
@@ -128,6 +146,7 @@ services:
       - redis
       - mariadb
       - mongo
+      - rabbitmq
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
@@ -136,6 +155,7 @@ services:
       MARIADB_USER: admin
       MARIADB_PASSWORD: kettl-commerce-2202
       MARIADB_DB: order-service
+      RABBITMQ_URL: 'amqp://admin:kettl-commerce-2202@rabbitmq:5672'
     networks:
       - elk
 
@@ -223,6 +243,18 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    networks:
+      - elk
+
+  rabbitmq:
+    container_name: 'rabbitmq'
+    image: 'rabbitmq:3-management'
+    ports:
+      - '5672:5672' # For RabbitMQ protocol (AMQP)
+      - '15672:15672' # For RabbitMQ management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: kettl-commerce-2202
     networks:
       - elk
 

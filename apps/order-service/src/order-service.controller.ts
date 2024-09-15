@@ -20,7 +20,7 @@ import { OrderResponseDtoR, SingleOrderResponseDtoR, TrackOrderResponseDtoR } fr
 import { CancelOrderDto } from './dto/cancel-order-service.dto';
 
 @ApiTags('Orders')
-@Controller('orders')
+@Controller('order-service')
 export class OrderServiceController {
   constructor(private readonly orderService: OrderServiceService) {}
 

@@ -245,7 +245,18 @@ export class UsersService {
         throw new UnauthorizedException('Credentials not found!');
       }
 
-      await this.usersRepository.findOneAndUpdate(user?._id, updateUserDto);
+      console.log(updateUserDto?.address)
+
+      await this.usersRepository.findOneAndUpdate(user?._id, {
+        ...updateUserDto,
+        address: {
+          street: updateUserDto?.address?.street,
+          city: updateUserDto?.address?.city,
+          state: updateUserDto?.address?.state,
+          postalCode: updateUserDto?.address?.postalCode,
+          country: updateUserDto?.address?.country,
+        }
+      });
 
       return {
         status: 200,

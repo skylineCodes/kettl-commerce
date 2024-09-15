@@ -8,15 +8,22 @@ import {
   IsObject,
   IsBoolean,
   IsOptional,
+  IsDefined,
+  IsNotEmptyObject,
 } from 'class-validator';
 import { CreateOrderItemDto } from './create-order-item.dto';
 import { Address } from 'apps/auth/src/users/models/address.schema';
 import { ApiProperty } from '@nestjs/swagger';
+import { CreateChargeDTO } from '@app/common/dto/create-charge.dto';
 
 export class CreateOrderDto {
   @IsString()
   @IsOptional()
   userId: string;
+  
+  @IsString()
+  @IsOptional()
+  order_id: string;
   
   @ApiProperty({ example: [
     {
@@ -76,14 +83,19 @@ export class CreateOrderDto {
   @IsString()
   paymentMethod: string;
   
-  @IsBoolean()
   @IsOptional()
-  completedAt: boolean;
+  completedAt: Date;
   
   @ApiProperty({ example: 'standard' })
   @IsNotEmpty()
   @IsString()
   shippingMethod: string;
+
+  @IsDefined()
+  @IsNotEmptyObject()
+  @ValidateNested()
+  @Type(() => CreateChargeDTO)
+  charge: CreateChargeDTO;
 
   createdAt: Date;
 

@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { OrderItem } from './order-item.schema';
-import { IsArray, IsEnum, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Address } from 'apps/auth/src/users/models/address.schema';
 import { ApiProperty } from '@nestjs/swagger';
@@ -17,7 +17,12 @@ export class Order {
   @ApiProperty({ example: 1 })
   @PrimaryGeneratedColumn()
   id: number;
-  
+
+  @IsString()
+  @IsOptional()
+  @Column({ nullable: true })
+  order_id: string;
+
   @ApiProperty({ example: '66c72ef1591afcd4c692706c' })
   @Column()
   userId: string;
@@ -71,7 +76,7 @@ export class Order {
   paymentMethod: string;
 
   @Column({ type: 'timestamp', nullable: true })
-  completedAt: boolean;
+  completedAt: Date;
 
   @Column()
   @IsString()
@@ -82,6 +87,10 @@ export class Order {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  // invoice_id
+  // payment_status
+  // 
 }
 
 export interface OrderR {

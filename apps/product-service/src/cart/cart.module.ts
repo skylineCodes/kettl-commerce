@@ -19,9 +19,9 @@ import { CartProductDocument, CartProductSchema } from './models/cart-product.sc
     DatabaseModule.forFeature([
       { name: CartDocument.name, schema: CartSchema },
     ]),
-    DatabaseModule.forFeature([
-      { name: CartProductDocument.name, schema: CartProductSchema },
-    ]),
+    // DatabaseModule.forFeature([
+    //   { name: CartProductDocument.name, schema: CartProductSchema },
+    // ]),
     MongooseModule.forFeature([{ name: UserDocument.name, schema: UserSchema }, { name: ProductServiceDocument.name, schema: ProductSchema }]),
     ClientsModule.registerAsync([
       {

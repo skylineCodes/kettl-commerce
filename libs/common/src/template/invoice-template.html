@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+</head>
+
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f2f2f2;">
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+        style="background-color: #f2f2f2; padding: 20px;">
+        <tr>
+            <td>
+                <table role="presentation" width="600" cellpadding="0" cellspacing="0"
+                    style="background-color: #fff; margin: 0 auto; padding: 20px; border: 1px solid #ddd;">
+                    <!-- Header -->
+                    <tr>
+                        <td style="padding: 20px 0; text-align: center;">
+                            <img src="https://firebasestorage.googleapis.com/v0/b/mizright-3949d.appspot.com/o/images%2Fkettl-white-banner.jpg?alt=media&token=f1c42fd6-95bc-4ac9-9cb2-2de9e0cdfb4a"
+                                alt="kettl-commerce-logo" style="max-width: 100%; height: auto;">
+                            <h2 style="margin: 0;">Invoice</h2>
+                        </td>
+                    </tr>
+
+                    <!-- Invoice Info -->
+                    <tr>
+                        <td>
+                            <table role="presentation" width="100%" cellpadding="5" cellspacing="0"
+                                style="border-collapse: collapse;">
+                                <tr>
+                                    <td style="padding: 10px; font-size: 14px;">
+                                        <strong>Invoice #:</strong> {{ invoice_no }}<br>
+                                        <strong>Invoice Date:</strong> {{ issued_date }}<br>
+                                        <strong>Order Number:</strong> #{{ order_id }}
+                                    </td>
+                                    <td style="padding: 10px; font-size: 14px; text-align: right;">
+                                        <strong>Billed To:</strong><br>
+                                        {{ customer_name }}<br>
+                                        {{ country }}<br>
+                                        {{ customer_email }}<br>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Order Details -->
+                    <tr>
+                        <td>
+                            <table role="presentation" width="100%" cellpadding="5" cellspacing="0"
+                                style="border-collapse: collapse; margin-top: 20px;">
+                                <tr style="background-color: #f8f8f8;">
+                                    <td style="border: 1px solid #ddd; padding: 10px; font-size: 14px;">
+                                        <strong>Description</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 10px; font-size: 14px;">
+                                        <strong>Price</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 10px; font-size: 14px;">
+                                        <strong>Quantity</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 10px; font-size: 14px;">
+                                        <strong>Total</strong></td>
+                                </tr>
+                                {{ invoice_items }}
+                                <!-- <tr>
+                                    <td style="border: 1px solid #ddd; padding: 10px; font-size: 14px;">Setup</td>
+                                    <td style="border: 1px solid #ddd; padding: 10px; font-size: 14px;">$0.00</td>
+                                    <td style="border: 1px solid #ddd; padding: 10px; font-size: 14px;">-</td>
+                                    <td style="border: 1px solid #ddd; padding: 10px; font-size: 14px;">$0.00</td>
+                                </tr> -->
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Summary -->
+                    <tr>
+                        <td>
+                            <table role="presentation" width="100%" cellpadding="5" cellspacing="0"
+                                style="margin-top: 20px;">
+                                <tr>
+                                    <td style="padding: 10px; font-size: 14px; text-align: right;">
+                                        <strong>Total:</strong> {{ currency }} {{ total }}<br>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 20px; text-align: center; font-size: 12px; color: #666;">
+                            <p>{{ note }}</p>
+                            <p>If you have any questions about this invoice, please contact us at <a
+                                    href="mailto:support@kettl-commerce.com">support@kettl-commerce.com</a>.</p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+
+</body>
+
+</html>

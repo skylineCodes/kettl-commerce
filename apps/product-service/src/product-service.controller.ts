@@ -9,7 +9,7 @@ import { PaginatedProductsResponseDto } from './dto/paginated-products-response.
 import { ProductServiceDocument } from './models/product-service.schema';
 
 @ApiTags('Product Service')
-@Controller('products')
+@Controller('product-service')
 export class ProductServiceController {
   constructor(private readonly productServiceService: ProductServiceService) {}
 

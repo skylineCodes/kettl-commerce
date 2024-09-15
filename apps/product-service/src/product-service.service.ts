@@ -7,6 +7,7 @@ import { DynamicPricingDto } from './dto/discount-product-dto';
 import { PaginateDto } from './dto/paginate-product-service.dto';
 import { ConfigService } from '@nestjs/config';
 import { UserDto } from '@app/common';
+import { generateRequestId } from '@app/common/utils/helper.util';
 
 @Injectable()
 export class ProductServiceService {
@@ -17,15 +18,11 @@ export class ProductServiceService {
     private readonly configService: ConfigService,
   ) {}
 
-  generateRequestId(): string {
-    return Math.random().toString(36).substring(2, 9);
-  }
-
   async create(
     createProductServiceDto: CreateProductServiceDto,
     user: UserDto
   ): Promise<ProductR> {
-    const requestId = this.generateRequestId();
+    const requestId = generateRequestId();
     
     this.logger.log(JSON.stringify({
       message: 'Product Create',
@@ -76,7 +73,7 @@ export class ProductServiceService {
   }
 
   async findAll(paginateDto: PaginateDto, user: UserDto): Promise<ProductR> {
-    const requestId = this.generateRequestId();
+    const requestId = generateRequestId();
     
     this.logger.log({
       message: 'Product Read',
@@ -160,7 +157,7 @@ export class ProductServiceService {
   }
 
   async findOne(id: string,  user: UserDto): Promise<ProductR> {
-    const requestId = this.generateRequestId();
+    const requestId = generateRequestId();
 
     this.logger.log(JSON.stringify({
       message: 'Product Single Read',
@@ -213,7 +210,7 @@ export class ProductServiceService {
     updateProductServiceDto: UpdateProductServiceDto,
     user: UserDto
   ): Promise<ProductR> {
-    const requestId = this.generateRequestId();
+    const requestId = generateRequestId();
 
     this.logger.log(JSON.stringify({
       message: 'Product Update',
@@ -267,7 +264,7 @@ export class ProductServiceService {
   }
 
   async remove(id: string, user: UserDto): Promise<ProductR> {
-    const requestId = this.generateRequestId();
+    const requestId = generateRequestId();
     this.logger.log(JSON.stringify({
       message: 'Product Delete',
       timestamp: new Date().toISOString(),
@@ -340,9 +337,12 @@ export class ProductServiceService {
           _id: id,
         });
 
-      product.stockQuantity -= quantity;
-
-      await product.save();
+      await this.productServiceRepository.findOneAndUpdate(
+        { _id: id },
+        {
+          stockQuantity: product?.stockQuantity - quantity
+        },
+      );
 
       return {
         status: 200,

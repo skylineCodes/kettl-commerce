@@ -12,12 +12,14 @@ import { CartModule } from './cart/cart.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserDocument, UserSchema } from 'apps/auth/src/users/models/user.schema';
 import { CartController } from './cart/cart.controller';
+import { InvoiceModule } from './invoice/invoice.module';
 import { UsersRepository } from 'apps/auth/src/users/users.repository';
-import { UsersModule } from 'apps/auth/src/users/users.module';
+import { InvoiceController } from './invoice/invoice.controller';
 
 @Module({
   imports: [
     CartModule,
+    InvoiceModule,
     DatabaseModule,
     DatabaseModule.forFeature([
       { name: ProductServiceDocument.name, schema: ProductSchema },
@@ -48,8 +50,9 @@ import { UsersModule } from 'apps/auth/src/users/users.module';
         inject: [ConfigService],
       },
     ]),
+    InvoiceModule,
   ],
-  controllers: [ProductServiceController, CartController],
+  controllers: [ProductServiceController, CartController, InvoiceController],
   providers: [ProductServiceService, ProductServiceRepository, UsersRepository, JwtAuthGuard],
   exports: [ProductServiceService, ProductServiceRepository],
 })
@@ -63,6 +66,7 @@ export class ProductServiceModule {
         path: 'product-service',
         method: RequestMethod.GET
       },
-      { path: 'product-service/:id', method: RequestMethod.GET },)
+      { path: 'product-service/:id', method: RequestMethod.GET }
+    )
   }
 }
