@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { LoggerModule, NOTIFICATIONS_SERVICE } from '@app/common';
+import { APP_GUARD } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Order } from './models/order-service.schema';
 import { OrderItem } from './models/order-item.schema';
@@ -8,21 +8,33 @@ import { OrderRepository } from './order-service.repository';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OrderServiceService } from './order-service.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { LoggerModule, NOTIFICATIONS_SERVICE } from '@app/common';
 import { WishlistController } from './wishlist/wishlist.controller';
 import { OrderServiceController } from './order-service.controller';
 import { UsersRepository } from 'apps/auth/src/users/users.repository';
 import { RedisCacheMiddleware } from 'middleware/redis-cache.middleware';
-import { UserDocument, UserSchema } from 'apps/auth/src/users/models/user.schema';
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
+import { InvoiceService } from 'apps/product-service/src/invoice/invoice.service';
+import { UserDocument, UserSchema } from 'apps/auth/src/users/models/user.schema';
+import { InvoiceRepository } from 'apps/product-service/src/invoice/invoice.repository';
+import { ThrottlerGuard, ThrottlerModule, ThrottlerModuleOptions } from '@nestjs/throttler';
 import { ProductServiceRepository } from 'apps/product-service/src/product-service.repository';
+import { Invoice, InvoiceSchema } from 'apps/product-service/src/invoice/models/invoice-schema';
 import { AUTH_SERVICE, CacheModule, DatabaseModule, JwtAuthGuard, PAYMENTS_SERVICE } from '@app/common';
 import { ProductSchema, ProductServiceDocument } from 'apps/product-service/src/models/product-service.schema';
-import { InvoiceService } from 'apps/product-service/src/invoice/invoice.service';
-import { InvoiceRepository } from 'apps/product-service/src/invoice/invoice.repository';
-import { Invoice, InvoiceSchema } from 'apps/product-service/src/invoice/models/invoice-schema';
 
 @Module({
   imports: [
+    ThrottlerModule.forRootAsync({
+      useFactory: (): ThrottlerModuleOptions => ({
+        throttlers: [
+          {
+            ttl: 60000,   // Time window in seconds
+            limit: 10, // Maximum number of requests per ttl window
+          },
+        ],
+      }),
+    }),
     DatabaseModule,
     DatabaseModule.forTypeOrmRoot({
       entities: [Order, OrderItem],
@@ -82,7 +94,10 @@ import { Invoice, InvoiceSchema } from 'apps/product-service/src/invoice/models/
       }
     ]),
   ],
-  providers: [OrderServiceService, InvoiceService, OrderRepository, InvoiceRepository, UsersRepository, ProductServiceRepository, JwtAuthGuard],
+  providers: [OrderServiceService, InvoiceService, OrderRepository, InvoiceRepository, UsersRepository, ProductServiceRepository, JwtAuthGuard, {
+    provide: APP_GUARD,
+    useClass: ThrottlerGuard
+  }],
   controllers: [OrderServiceController, WishlistController],
 })
 

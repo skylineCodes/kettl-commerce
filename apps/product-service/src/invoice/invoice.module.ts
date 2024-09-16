@@ -11,9 +11,21 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { UsersRepository } from 'apps/auth/src/users/users.repository';
 import { ProductServiceRepository } from '../product-service.repository';
+import { ThrottlerGuard, ThrottlerModule, ThrottlerModuleOptions } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
+    ThrottlerModule.forRootAsync({
+      useFactory: (): ThrottlerModuleOptions => ({
+        throttlers: [
+          {
+            ttl: 60000,   // Time window in seconds
+            limit: 10, // Maximum number of requests per ttl window
+          },
+        ],
+      }),
+    }),
     DatabaseModule,
     DatabaseModule.forFeature([
       { name: Invoice.name, schema: InvoiceSchema },
@@ -33,7 +45,10 @@ import { ProductServiceRepository } from '../product-service.repository';
       },
     ]),
   ],
-  providers: [InvoiceRepository, InvoiceService, UsersRepository, ProductServiceRepository, JwtAuthGuard],
+  providers: [InvoiceRepository, InvoiceService, UsersRepository, ProductServiceRepository, JwtAuthGuard, {
+    provide: APP_GUARD,
+    useClass: ThrottlerGuard
+  }],
   controllers: [InvoiceController],
   exports: [InvoiceService, InvoiceRepository],
 })

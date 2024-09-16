@@ -8,9 +8,21 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { Address, AddressSchema } from './models/address.schema';
+import { ThrottlerGuard, ThrottlerModule, ThrottlerModuleOptions } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
+    ThrottlerModule.forRootAsync({
+      useFactory: (): ThrottlerModuleOptions => ({
+        throttlers: [
+          {
+            ttl: 60000,   // Time window in seconds
+            limit: 10, // Maximum number of requests per ttl window
+          },
+        ],
+      }),
+    }),
     DatabaseModule,
     DatabaseModule.forFeature([
       { name: UserDocument.name, schema: UserSchema },
@@ -41,7 +53,10 @@ import { Address, AddressSchema } from './models/address.schema';
     ]),
   ],
   controllers: [UsersController],
-  providers: [UsersService, UsersRepository],
+  providers: [UsersService, UsersRepository, {
+    provide: APP_GUARD,
+    useClass: ThrottlerGuard
+  }],
   exports: [UsersService, UsersRepository],
 })
 export class UsersModule {}

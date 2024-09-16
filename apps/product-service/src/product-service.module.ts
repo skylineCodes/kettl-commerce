@@ -15,9 +15,21 @@ import { CartController } from './cart/cart.controller';
 import { InvoiceModule } from './invoice/invoice.module';
 import { UsersRepository } from 'apps/auth/src/users/users.repository';
 import { InvoiceController } from './invoice/invoice.controller';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule, ThrottlerModuleOptions } from '@nestjs/throttler';
 
 @Module({
   imports: [
+    ThrottlerModule.forRootAsync({
+      useFactory: (): ThrottlerModuleOptions => ({
+        throttlers: [
+          {
+            ttl: 60000,   // Time window in seconds
+            limit: 10, // Maximum number of requests per ttl window
+          },
+        ],
+      }),
+    }),
     CartModule,
     InvoiceModule,
     DatabaseModule,
@@ -53,7 +65,10 @@ import { InvoiceController } from './invoice/invoice.controller';
     InvoiceModule,
   ],
   controllers: [ProductServiceController, CartController, InvoiceController],
-  providers: [ProductServiceService, ProductServiceRepository, UsersRepository, JwtAuthGuard],
+  providers: [ProductServiceService, ProductServiceRepository, UsersRepository, JwtAuthGuard, {
+    provide: APP_GUARD,
+    useClass: ThrottlerGuard
+  }],
   exports: [ProductServiceService, ProductServiceRepository],
 })
 

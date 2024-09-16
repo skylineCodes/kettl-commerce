@@ -7,6 +7,7 @@ import { CurrentUser, JwtAuthGuard, UserDto } from '@app/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PaginatedProductsResponseDto } from './dto/paginated-products-response.dto';
 import { ProductServiceDocument } from './models/product-service.schema';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 
 @ApiTags('Product Service')
 @Controller('product-service')
@@ -28,6 +29,7 @@ export class ProductServiceController {
     return this.productServiceService.create(createProductServiceDto, user);
   }
 
+  // @Throttle({ default: { limit: 3, ttl: 10000 } })
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get paginated list of products' })

@@ -8,9 +8,21 @@ import * as Joi from 'joi';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { ThrottlerGuard, ThrottlerModule, ThrottlerModuleOptions } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
+    ThrottlerModule.forRootAsync({
+      useFactory: (): ThrottlerModuleOptions => ({
+        throttlers: [
+          {
+            ttl: 60000,   // Time window in seconds
+            limit: 10, // Maximum number of requests per ttl window
+          },
+        ],
+      }),
+    }),
     UsersModule,
     LoggerModule,
     ConfigModule.forRoot({
@@ -35,6 +47,9 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, {
+    provide: APP_GUARD,
+    useClass: ThrottlerGuard
+  }],
 })
 export class AuthModule {}
